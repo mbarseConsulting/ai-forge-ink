@@ -1,5 +1,5 @@
 ---
-name: prompt-ink
+name: it-prompts
 description: "Use when: (1) generating image prompts from narrative content or descriptions, (2) translating character sheets or scenes into visual prompts, (3) creating img2img prompts from reference images"
 ---
 

@@ -1,0 +1,101 @@
+# Generated Character Skill — Directory Structure
+
+> This document describes the structure that bd-character generates for each character.
+> Every character is a self-contained skill directory.
+
+## Directory layout
+
+```
+{character-name}/
+  SKILL.md                              # Active portrait — the character RIGHT NOW
+  index.md                              # Snapshot index — which snapshot, when, what changed
+  core/
+    core.md                             # Permanent — identity, personality, physical baseline
+    writing-rules.md                    # Permanent — always/never/traps/signals
+  snapshots/
+    001/
+      state.md                          # Deltas only — what changed from core/ at this point
+      relations/
+        {other-character}.md            # Relationships at this point
+      memory/
+        narrative/
+          {event}.md                    # What happened — accumulated
+        somatic/
+          {trace}.md                    # What the body registered — accumulated
+    002/
+      (copied from 001 via --new, then edited)
+    ...
+  puppets/
+    notebook.md                         # Persistent positions from puppet-* sessions (NOT canon)
+    _staging/                           # Satellite outputs from live sessions (review + promote)
+```
+
+## The core/snapshot contract
+
+### core/ — permanent reference
+
+The character as forged. The exhaustive reference that never changes.
+
+- `core.md` — Identity (birth, origin, background, constants, detail notes), personality (wound, ghost, lie, defenses, motors, facade/core), physical baseline (appearance, voice, behavior, skills, public/private). Everything about the character in one document.
+- `writing-rules.md` — Instructions for anyone writing this character. Always/never/traps/characteristic signals/common traps. Separate from core.md because it's instructions, not description.
+
+**Rule: nothing in core/ changes because of the story.** If something changes, it's a retcon, not an evolution.
+
+### snapshots/ — deltas in time
+
+Numbered directories (001, 002, 003...). Each snapshot contains ONLY what has changed from core/ at that specific moment. If the character's eyes are still green, state.md doesn't mention eyes. If they've gone white after a spell, state.md says so.
+
+- `state.md` — Deltas only. Physical changes, behavior shifts, voice evolution, psychological state changes. Anything not in state.md is unchanged from core/.
+- `relations/` — Relationships at this point. One file per significant relationship, from this character's perspective.
+- `memory/` — What the character has lived. `narrative/` for events, `somatic/` for body traces.
+
+### Loading logic
+
+**Default:** Read `core/core.md`, then `snapshots/{current}/state.md` on top. State overrides core where specified — everything else comes from core.
+
+**No snapshots yet:** Read `core/` only. The character hasn't evolved.
+
+**Specific moment:** Consult `index.md` for the snapshot number, then `core/` + `snapshots/{number}/`.
+
+### SKILL.md — the living portrait
+
+Synthesized from core/ + the current snapshot. Rewritten when a new snapshot is created. Contains structured fields for downstream consumers and loading instructions.
+
+### index.md — snapshot registry
+
+```markdown
+# Snapshots
+
+| # | Label | Period | Notes |
+|---|-------|--------|-------|
+| 001 | {human label} | {when in the story} | {what changed from core} |
+| 002 | {label} | {when} | {what changed from 001} |
+
+Current: 001
+```
+
+- Numbered sequentially (001, 002, 003...)
+- Label and period are free-form
+- `Current` points to the snapshot that SKILL.md reflects
+- No snapshots = no index.md yet (character at baseline)
+
+## Operations
+
+### --new (create snapshot)
+
+1. Read index.md (or core/ if no snapshots exist yet) to find the starting point
+2. If first snapshot: create `snapshots/001/` with an empty state.md
+3. If subsequent: copy the current snapshot directory to the next number
+4. Ask the author for label, period, and what changed
+5. Guide the author through editing state.md — only the deltas
+6. Update index.md and rewrite SKILL.md
+
+### --relation (build relation)
+
+Delegates to `/bd-relation` if available, or builds inline using `references/template-relation.md`.
+
+### Consumer loading (from SKILL.md)
+
+- **cast-ink:** SKILL.md + `snapshots/{current}/relations/*.md` (if any)
+- **puppet-ink:** SKILL.md + `core/*` + `snapshots/{current}/*` (everything)
+- **write-ink:** SKILL.md + `core/writing-rules.md`

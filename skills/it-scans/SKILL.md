@@ -1,5 +1,5 @@
 ---
-name: scan-ink
+name: it-scans
 description: "Use when: (1) analyzing a comic/manga/BD scan, (2) extracting dialogue and script from visual pages, (3) describing scenes or identifying characters from illustrated panels"
 ---
 
