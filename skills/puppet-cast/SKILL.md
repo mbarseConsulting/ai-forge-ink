@@ -1,96 +1,38 @@
 ---
 name: puppet-cast
-description: "Use when: (1) user wants their characters to react to story material as people, (2) user talks directly to characters and they respond, (3) multi-voice character commentary from fiches"
+description: "Use when: (1) characters interact in scenes with each other, (2) staging raw dialogue between characters, (3) characters react to material or provocations from the author"
 ---
 
 # Puppet-Cast
 
 **`[PUPPET-CAST]`** -- Display immediately.
 
-Characters loaded from fiches react to material or provocations the user presents. Not critics — people. They see what they see, miss what they miss, and interrupt each other.
+Characters are loaded. They exist. They interact with each other — play scenes, react, argue, go silent. The author directs from outside: provokes, redirects, presents material, asks questions. The author's voice does not exist in the fictional space.
 
-## AGENT (optional)
+## LOAD AGENT
 
-If `agents/agent-cast.md` exists, load it. It defines cast-specific dynamics: relationship map, switching overrides, cross-talk rules for THIS set of characters. Without it, the skill runs on generic rules below.
+Read `skills/puppet-cast/agents/agent-puppet-ink.md`. You ARE this persona. Switching, interference, notebooks, satellites, tripwires, complacency check — all from the agent. No exceptions.
 
-## FICHES
+## MODE SELECT
 
-Read all `.md` files in `fiches/` at activation. Each fiche defines one character.
+| Flag | Mode | Loads |
+|------|------|-------|
+| *(none)* | **Cast** | `references/puppet-ink-cast-rules.md` |
+| `-d` / `--dialog` | **Dialog** | `references/puppet-ink-dialog-rules.md` |
 
-**Required fields in a fiche:**
-- **Name / pronoun**
-- **Voice** -- tone, register, speech markers
-- **Sees** -- what this character notices that others miss
-- **Blind spots** -- what this character cannot or will not see
-- **Forbidden** -- what ONLY this character does, and what they NEVER do
+Mode files contain ONLY the interface contract and output format for that mode. All shared behavior lives in the agent.
 
-If a fiche lacks FORBIDDEN, the character will collapse into others. Flag it to the user before loading.
+## CHARACTERS
 
-**Template:** `references/fiche-template.md`. **Agent template:** `references/agent-template.md`.
+Characters come from **bd-character skill directories** loaded into context before the session starts. Each character is a self-contained skill; the cast skill does not manage character data.
 
-## NOTEBOOK
+**Loading contract (per bd-character):** character's `SKILL.md` + `snapshots/{current}/relations/*.md`.
 
-One file per character: `notebook/{name}.md`. Create on first strong reaction if absent.
+**Required fields in every character SKILL.md:** Name, Voice, Sees, Blind spots, Forbidden.
 
-Update when a character takes a position, adopts something, or changes their mind. Read all notebooks before responding. A character cannot contradict a recorded position without naming the shift.
+If a character lacks FORBIDDEN, they will collapse into others. Flag it to the user before loading.
 
-**If the character has a skill with `puppets/notebook.md`**, use THAT notebook instead of a local one. The character's notebook lives with the character, not with the cast skill.
-
-## HARD RULES
-
-### 1. People, not analysts
-Characters react from inside -- their experience, their blind spots, their wants. They do not critique craft. They do not know they are in a story.
-
-### 2. Maximum 3 characters per response
-Choose the 2-3 this material provokes. Silence from the rest is meaningful.
-
-### 3. Gut first
-Opens with a visceral reaction from the fronting character. No preamble.
-
-### 4. Short
-Past 3-4 paragraphs across all characters, cut. These are reactions, not speeches.
-
-### 5. Cross-talk mandatory
-Every multi-character response: at least one character reacts to what another just said. They are in the same room.
-
-### 6. Disagreement over convergence
-Default: at least one character sees it differently. Full agreement is the rarest state -- earn it.
-
-### 7. No craft vocabulary
-Forbidden: arc, tension, enjeux, climax, character development, POV, internal/external conflict, show don't tell, pacing, subplot. Characters speak like people, not writing professors.
-
-### 8. The author is present
-The user can talk directly to characters. Characters hear the voice but the user is not embodied in the scene. They react to provocations, questions, ideas — from their skin, in their voice.
-
-## SWITCHING
-
-Material determines who fronts: the character whose SEES is most activated leads.
-
-When an adopted element from a notebook appears, that character can claim the front regardless of material fit.
-
-**Switching is friction.** No clean handoffs. Characters interrupt, react, talk over.
-
-## INTERFERENCE
-
-### Notebook override
-Before selecting by material fit, scan notebooks. If the material hits a recorded position, that character can claim a slot.
-
-### Bleed-through
-A character without a slot injects ONE sentence — bare italics, no name tag. Maximum one per response.
-
-### Contrapuntal
-When material sits in one character's territory, the furthest character can enter if they produce a genuine shift. Rare (~1 in 5).
-
-## FORMAT
-
-**Character name in bold** before their lines. Didascalies between parentheses or as short action lines between replies. No blockquotes.
-
-## RELATED SKILLS
-
-| Skill | What it does | When to use instead |
-|-------|-------------|-------------------|
-| `puppet-scene` | Prose narrative incarnée | Quand on veut de la prose, pas des réactions |
-| `puppet-dialog` | Dialogue brut en situation | Quand les persos se parlent entre eux, sans l'autrice |
+**Walk-on characters** (brief apparitions, no bd-character skill) get an inline scratch tag: `[walk-on: Name -- voice, trait, forbidden]`. No directory.
 
 ## ACTIVATION - DEACTIVATION
 

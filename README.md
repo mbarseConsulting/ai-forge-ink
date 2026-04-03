@@ -1,49 +1,57 @@
 # 🌙 AI Forge Ink
 
-_AI artifacts for visual fiction — worldbuilding, scan analysis, and image prompt generation._
+_AI artifacts for visual fiction — worldbuilding, characters, dialogue, and image generation._
 
 ## Description
 
-A visual fiction toolkit: build and maintain world bibles, analyze comic/manga pages, and generate image prompts for AI illustration tools. 3 specialized skills bridging narrative and visual creation.
+A visual fiction toolkit: build worlds, forge characters with emotional depth and memory, stage dialogue and scenes, analyze comic pages, and generate image prompts. 11 specialized skills organized in 3 families, designed for Claude Code.
 
-## Overview
+## Skills
 
-| Skill        | Role                                                                                                        |
-| ------------ | ----------------------------------------------------------------------------------------------------------- |
-| `world-ink`  | World bible builder — generates and maintains universe bibles, timelines, character sheets, relation sheets |
-| `scan-ink`   | Scan analyzer — extracts script, dialogue, scene descriptions and tags from comic/manga/BD pages            |
-| `prompt-ink` | Prompt generator — translates narrative content into image prompts (NovelAI, Midjourney, Stable Diffusion)  |
+### BD — Worldbuilding & Characters
 
-**3 skills** — 1 worldbuilding, 1 scan analysis, 1 prompt generation
+| Skill          | Role                                                                      |
+| -------------- | ------------------------------------------------------------------------- |
+| `bd-world`     | World bible builder — universes, timelines, worldbuilding gaps            |
+| `bd-character` | Character forge — complete skill directories with snapshots and portraits |
+| `bd-emotions`  | Emotional profiler — builds and analyzes character emotional profiles     |
+| `bd-memory`    | Memory recorder — tracks how characters remember and distort past events  |
+| `bd-relation`  | Relation builder — deep bidirectional relation sheets between characters  |
+| `bd-supp-cast` | Supporting cast — lightweight fiches for secondary characters             |
 
-## Usage
+### Puppet — Character Embodiment & Fiction
 
-### `/world-ink`
+| Skill | Role |
+| --- | --- |
+| `puppet-play` | Collaborative fiction — roleplay with NPCs, character embodiment |
+| `puppet-cast` | Characters interact, react, argue — author directs from outside (prose or dialogue) |
+| `puppet-analyse` | Multi-focal literary analysis — 11 reading agents, 3 orbits, 4 macro-focales |
 
-Build or extend a world bible — universe, timeline, characters, relations.
+### IT — Image & Analysis Tools
 
-- **`--universe` / `--timeline` / `--character` / `--relation`** — guided construction by template
-- **`-i` / `--inline`** — write output inline instead of file
-- **default** — interrogation: identify gaps, propose structure
+| Skill        | Role                                                                                         |
+| ------------ | -------------------------------------------------------------------------------------------- |
+| `it-scans`   | Scan analyzer — extracts script, dialogue, scenes from comic/manga/BD pages                  |
+| `it-prompts` | Prompt generator — translates narrative content into image prompts (NovelAI, Midjourney, SD) |
 
----
+**11 skills** — 6 worldbuilding/characters, 3 puppet/fiction, 2 image tools
 
-### `/scan-ink`
+## Structure
 
-Analyze comic/manga/BD scans — extract script, scenes, tags, characters.
+```
+skills/          # Skills (SKILL.md + references/)
+agents/          # Agents (.md) and symlinks to skills/*/agents/
+claudeai/        # Zips ready for claude.ai import
+.claude/         # Config, hooks, symlinks
+```
 
-- **`--script`** — dialogue + stage directions only
-- **`--scene`** — scene description only
-- **`--tags`** — categorized tags only
-- **`--characters`** — character identification and description
-- **default** — full analysis: dialogue + scene + summary
+## Claude.ai Export
 
----
+Pre-built zips in `claudeai/` can be imported directly into claude.ai projects.
 
-### `/prompt-ink`
+Rebuild after any skill modification:
 
-Generate image prompts from narrative content.
-
-- **`--novelai`** — NovelAI syntax (default)
-- **`--midjourney`** — Midjourney syntax
-- **`--sd`** — Stable Diffusion syntax
+```bash
+.claude/scripts/build-claudeai.sh            # all zips
+.claude/scripts/build-claudeai.sh world-ink  # single zip
+```

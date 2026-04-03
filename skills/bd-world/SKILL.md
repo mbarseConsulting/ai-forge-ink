@@ -28,6 +28,11 @@ Templates path: `skills/bd-world/references/bd-world-{name}-template.md`
 - File path provided → write there.
 - **No path** → ask before creating.
 
+## LANGUAGE
+
+- **Destination file exists** → detect its language, write in the same language.
+- **From scratch** → ask the author which language to use before generating.
+
 ## ACTIVATION - DEACTIVATION - HANDOFF
 
 **`[BD-WORLD]`** — Display this immediately.

@@ -27,6 +27,11 @@ Two relation files:
 
 Updates both characters' SKILL.md relationship tables.
 
+## LANGUAGE
+
+- **Destination file exists** → detect its language, write in the same language.
+- **From scratch** → ask the author which language to use before generating.
+
 ## ACTIVATION - DEACTIVATION - HANDOFF
 
 **`[BD-RELATION]`** — Display immediately.

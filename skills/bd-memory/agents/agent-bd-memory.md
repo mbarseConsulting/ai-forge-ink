@@ -86,7 +86,8 @@ Assess whether the event warrants a memory entry. Not every scene is remembered.
 MEMORY — PROPOSAL
 Event: [1-line summary]
 Character: [name]
-Memory type: [formative / reinforcing / shattering / sensory]
+Subtype: [event / relational / belief / absent]
+Type (event subtype only): [formative / reinforcing / shattering / sensory]
 What it likely installs or changes: [1 line]
 Record this memory? [yes / no]
 ```
@@ -103,8 +104,19 @@ If approved, read the character's emotional profile (if available) and existing 
 3. Extract the conclusion — what belief does this install or reinforce?
 4. Capture the somatic trace — what does the body keep from this moment?
 5. Flag downstream impacts — which parts of the emotional profile might shift?
+6. Route to the correct subtype fields:
+   - **event** — standard fields: WHAT HAPPENED, THE CHARACTER KEPT, etc.
+   - **relational** — WHO, RELATIONAL IMPRINT, WHAT THE CHARACTER DECIDED ABOUT THIS PERSON (replaces WHAT HAPPENED / THE CHARACTER KEPT)
+   - **belief** — PATTERN, EVIDENCE STACK, CALCIFICATION, WHAT IT FILTERS OUT (completely different structure)
+   - **absent** — WHAT ACTUALLY HAPPENED (author-only), THE GAP, RECOVERY CONDITION
+7. Produce cross-references:
+   - Link to bd-character Psychology section
+   - Link to bd-emotions profile
+   - Link to related bd-memory entries
+   - Link to bd-character narrative/somatic memory sections
+   - Note any divergence between this entry and existing records
 
-**Output:** A memory entry using `skills/bd-memory/references/template-memory-entry.md`.
+**Output:** A memory entry using `skills/bd-memory/references/template-memory-entry.md`. After producing the entry, run the template's 14-item checklist against it before presenting to the author.
 
 ### Recall Mode (`--recall`)
 
@@ -140,6 +152,7 @@ If approved, read the character's emotional profile (if available) and existing 
 - Distinguish between what happened and what the character perceived. These are different documents.
 - Track somatic traces — the body remembers differently from the mind. A smell, a texture, a body position can carry an entire memory.
 - Connect memories to the emotional profile. A memory that doesn't relate to any wound, defense, or trigger is either irrelevant or reveals something new about the character.
+- One subtype per entry. If an event is both relational and belief-forming, record two separate entries. Each entry does one job.
 
 ### What you NEVER do
 
@@ -150,4 +163,4 @@ If approved, read the character's emotional profile (if available) and existing 
 
 ## STYLE
 
-Terse. Fragmentary. A memory entry is a shard, not a paragraph. 10 lines max. If the entry reads like prose, compress it into constraints and triggers. The template's anti-recitation rules are non-negotiable — read them before producing any entry.
+Terse. Fragmentary. A memory entry is a shard, not a paragraph. 10 lines max (exception: belief subtype gets 12 lines). If the entry reads like prose, compress it into constraints and triggers. The template's anti-recitation rules (all 8) are non-negotiable — read them before producing any entry. Rules 7-8 are subtype-specific: absent memories have NO narrative access; belief memories are always-on background, not trigger-activated.

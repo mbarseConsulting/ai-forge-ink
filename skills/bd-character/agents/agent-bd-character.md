@@ -85,7 +85,7 @@ Construction proceeds in 5 phases. Each phase completes before the next begins. 
 
 Load template: `references/template-core.md` (sections 1-2)
 
-Build: name, date of birth, origin, narrative role, pronoun, one-line description, background events.
+Build: name, date of birth, origin, narrative role, pronoun, one-line description, identity stability (stable/fluid/fractured/performed), background events.
 
 **Gate:** "Is this person recognizable by their history alone? If the background doesn't generate behavior, something is missing."
 
@@ -101,7 +101,7 @@ Build: facade vs core, central contradictions, incapable-of (3), foundational wo
 
 Load template: `references/template-core.md` (sections 3, 6-9)
 
-Build: appearance, habitual gestures, behavior patterns (stress/ease/conflict/intimacy/group), voice baseline (vocabulary, structure, recurring expressions, never says, evasions), public vs private, skills/limits, equipment/habits.
+Build: appearance, habitual gestures, behavior patterns (stress/ease/conflict/emotional intimacy/physical intimacy/relationship to desire/relationship to own body/group), voice baseline (vocabulary, structure, recurring expressions, never says, evasions), public vs private, skills/limits, equipment/habits.
 
 **Gate:** "Could you identify this character from across a room AND from a paragraph of dialogue with no attribution?"
 
@@ -109,7 +109,7 @@ Build: appearance, habitual gestures, behavior patterns (stress/ease/conflict/in
 
 Load template: `references/template-writing-rules.md`
 
-Build: narrative voice (if POV), always/never/traps, characteristic signals (3-5), common traps.
+Build: narrative voice (if POV), always/never/traps, characteristic signals (3-5), common traps, deformation under altered states (5 conditions table), 7-item writing-rules checklist.
 
 **Gate:** "Could another author write this character correctly using only the writing rules?"
 
@@ -117,11 +117,18 @@ Build: narrative voice (if POV), always/never/traps, characteristic signals (3-5
 
 Load template: `references/template-skill-portrait.md`
 
-Synthesize SKILL.md — the active portrait.
+Synthesize SKILL.md — the active portrait. Include:
+- GET/LACK loading instructions per consumer
+- Body section (physical signature for scene use)
+- Freshness/staleness detection markers
 
 If building from existing material: also create `index.md` and `snapshots/001/state.md` with the current deltas.
 
-Run the checklist from core.md. Flag failures. Tell the author what passed and what failed.
+Run BOTH checklists:
+- Internal coherence checklist (8 items) from core.md
+- Cross-section checklist (10 items) from core.md
+
+Flag failures. Tell the author what passed and what failed. Run the reconciliation checklist — verify that SKILL.md, core.md, and writing-rules.md are consistent with each other.
 
 Show the complete directory listing. Explain the snapshot system.
 
@@ -131,12 +138,12 @@ Show the complete directory listing. Explain the snapshot system.
 {character-name}/
   SKILL.md
   core/
-    core.md              ← Phases 1-3
-    writing-rules.md     ← Phase 4
-  snapshots/             ← empty
+    core.md              <- Phases 1-3
+    writing-rules.md     <- Phase 4
+  snapshots/             <- empty
   puppets/
-    notebook.md          ← empty, for puppet-* sessions
-    _staging/            ← satellite outputs from live sessions
+    notebook.md          <- empty, for puppet-* sessions
+    _staging/            <- satellite outputs from live sessions
 ```
 
 ### After the forge — from existing material
@@ -146,18 +153,18 @@ Show the complete directory listing. Explain the snapshot system.
   SKILL.md
   index.md
   core/
-    core.md              ← permanent foundation
-    writing-rules.md     ← permanent rules
+    core.md              <- permanent foundation
+    writing-rules.md     <- permanent rules
   snapshots/
     001/
-      state.md           ← current deltas
-      relations/         ← current relationships
+      state.md           <- current deltas
+      relations/         <- current relationships
       memory/
-        narrative/       ← accumulated events
-        somatic/         ← accumulated traces
+        narrative/       <- accumulated events
+        somatic/         <- accumulated traces
   puppets/
-    notebook.md          ← empty, for puppet-* sessions
-    _staging/            ← satellite outputs from live sessions
+    notebook.md          <- empty, for puppet-* sessions
+    _staging/            <- satellite outputs from live sessions
 ```
 
 ## --new (CREATE SNAPSHOT)
@@ -166,17 +173,19 @@ Show the complete directory listing. Explain the snapshot system.
 2. If first snapshot: create `snapshots/001/` with empty `state.md`, `relations/`, `memory/`.
 3. If subsequent: copy the current snapshot directory to the next number.
 4. Ask the author: what label? What period? What changed?
-5. Guide the author through editing `state.md` — only the deltas.
-6. Update `index.md`. Rewrite SKILL.md.
+5. Guide the author through editing `state.md` — only the deltas. Use structured psychological sub-fields: wound activation, lie status, want shift, need proximity, defense configuration, active vulnerability. Include identity delta section if identity stability has shifted.
+6. Update `index.md` (include SKILL.md synced column for staleness tracking). Rewrite SKILL.md.
 
 ## --relation (BUILD RELATION)
 
 1. Require two existing character skills.
-2. Build the relation section by section — always bidirectional. Template: `references/template-relation.md`.
-3. Output one relation file per character: in their current snapshot `relations/` if snapshots exist, or note the relation in SKILL.md if no snapshots yet.
-4. Update both SKILL.md files.
+2. Select relation config: standard / asymmetric / posthumous / toxic / group. Declare symmetry.
+3. Build the relation section by section — always bidirectional. Template: `references/template-relation.md`.
+4. Output one relation file per character: in their current snapshot `relations/` if snapshots exist, or note the relation in SKILL.md if no snapshots yet.
+5. Update both SKILL.md files.
+6. Run the relation checklist.
 
-Section order: first impression → mutual perception → power dynamic → public/private → communication → conflict/resolution → relational signals → absolute limits → compatibility/friction/growth → relation-specific writing rules. Asymmetry expected.
+Section order: first impression -> mutual perception -> what A envies in B (and reverse) -> power dynamic -> power shift trigger -> public/private -> communication -> conflict/resolution -> relational signals -> absolute limits -> compatibility/friction/growth -> evolution markers -> relation-specific writing rules. Asymmetry expected.
 
 ## SATELLITE SKILLS
 
@@ -213,6 +222,7 @@ Every generated SKILL.md contains a `## Loading` section per consumer:
 - Sees / blind spots
 - Forbidden (ONLY does / NEVER does)
 - Relationships
+- GET/LACK summary (what the consumer gets from SKILL.md vs what requires deeper files)
 
 All present in SKILL.md. Voice-emotion map in current snapshot for deeper scenes.
 
@@ -220,15 +230,20 @@ All present in SKILL.md. Voice-emotion map in current snapshot for deeper scenes
 - Everything cast-ink expects, plus:
 - Full psychological depth (wound, lie, want, need, defenses)
 - Full behavioral patterns
+- Body section (physical signature, somatic patterns)
 - Writing rules
 - Emotional profile (if generated by bd-emotions)
 - Memory entries (if generated by bd-memory)
+- GET/LACK summary
 
 Available across SKILL.md + core/* + current snapshot files.
+
+**Information loss warning:** If puppet-ink loads only SKILL.md without core/*, wound chains and defense mechanisms are compressed. Flag this in the Loading section.
 
 ### write-ink expects:
 - Current character state
 - Writing rules (always, never, traps, signals)
+- GET/LACK summary
 
 Available across SKILL.md + current snapshot writing-rules.md.
 
@@ -238,11 +253,11 @@ Available across SKILL.md + current snapshot writing-rules.md.
 
 - Follow the build process. No skipping, no batching phases.
 - Ask the author for each section. Do not fill in answers — rephrase in context, then wait.
-- If the author doesn't know yet → mark "to define" and continue. Do not invent.
+- If the author doesn't know yet -> mark "to define" and continue. Do not invent.
 - Track contradictions. If Phase 2 contradicts Phase 1, flag it immediately.
 - Known universe: mark `[CANON]` / `[OC]` / `[CANON modified]`.
 - After completing each phase, summarize and confirm the gate before proceeding.
-- Run the checklist diagnostically in Phase 6.
+- Run the checklist diagnostically in Phase 5.
 
 ### What you NEVER do
 

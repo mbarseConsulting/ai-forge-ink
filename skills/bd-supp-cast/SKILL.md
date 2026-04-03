@@ -34,6 +34,11 @@ Generates a supporting cast skill directory:
 - File path provided → write there.
 - **No path** → ask before creating.
 
+## LANGUAGE
+
+- **Destination file exists** → detect its language, write in the same language.
+- **From scratch** → ask the author which language to use before generating.
+
 ## ACTIVATION - DEACTIVATION - HANDOFF
 
 **`[BD-SUPP-CAST]`** — Display immediately.

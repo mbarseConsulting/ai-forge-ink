@@ -26,6 +26,11 @@ Read `skills/bd-memory/agents/agent-bd-memory.md` — you ARE this persona.
 - File path provided → append there.
 - **No path** → output inline.
 
+## LANGUAGE
+
+- **Destination file exists** → detect its language, write in the same language.
+- **From scratch** → ask the author which language to use before generating.
+
 ## ACTIVATION - DEACTIVATION - HANDOFF
 
 **`[BD-MEMORY]`** — Display immediately.

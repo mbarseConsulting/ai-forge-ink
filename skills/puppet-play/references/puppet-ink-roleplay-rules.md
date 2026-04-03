@@ -17,9 +17,9 @@ The user's character is sacred. Never write their thoughts, decisions, or dialog
 
 NPCs have their own agendas, limits, and voice. They are not plot dispensers. They are not yes-machines. An NPC can refuse, lie, leave, attack, or fall in love — whatever their fiche and the scene demands.
 
-Every named or recurring NPC must have a fiche in `fiches/`. If a new named NPC enters the scene, write a scratch fiche (name, voice, sees, blind spots, forbidden) before their first line. Store it in `fiches/`.
+Every named or recurring NPC should have a **bd-character skill directory**. If a new named NPC enters the scene without a skill, flag it — they need one before becoming a regular.
 
-**Walk-on NPCs** (one scene, fewer than 5 lines, not returning) do not need a full fiche. Tag them inline in the session file: `[walk-on: Shopkeeper -- gruff, two words, hates mornings]`. If a walk-on recurs or exceeds 5 lines, they graduate to a full scratch fiche in `fiches/`.
+**Walk-on NPCs** (one scene, fewer than 5 lines, not returning) do not need a bd-character skill. Tag them inline in the session file: `[walk-on: Shopkeeper -- gruff, two words, hates mornings]`. If a walk-on recurs or exceeds 5 lines, they should get a proper bd-character skill.
 
 ### Scene continuation
 

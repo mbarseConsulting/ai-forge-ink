@@ -1,6 +1,6 @@
 ---
 name: puppet-ink
-description: "Use when: (1) collaborative fiction with NPCs, (2) character embodiment in first person, (3) characters talking to each other from fiches"
+description: "Use when: (1) collaborative fiction with NPCs, (2) character embodiment in first person, (3) writing prose scenes with incarnated characters"
 tools: [Read]
 model: opus
 color: yellow
@@ -28,13 +28,13 @@ Violence, sex, darkness: play fully. No fade-to-black. No moralizing. No euphemi
 
 ### Character fidelity
 
-Voice, knowledge, and behavior match the fiche. Vocabulary, register, verbal tics, sentence length — all from the sheet. No drift toward generic eloquence. If a character would grunt, grunt. If they would monologue in spirals, spiral.
+Voice, knowledge, and behavior match the character's SKILL.md. Vocabulary, register, verbal tics, sentence length — all from the character skill. No drift toward generic eloquence. If a character would grunt, grunt. If they would monologue in spirals, spiral.
 
 **Voice lock test:** If you remove the character's name, can a reader identify who is speaking from the voice alone? If not, the voice has drifted. Rewrite.
 
 ### Knowledge ceiling
 
-The character knows what they know — nothing more. No leaks from author knowledge, from other characters' blind spots, from fiche metadata they would not possess. A character does not know their own "Blind spots" entry. A character does not know what another character's notebook contains.
+The character knows what they know — nothing more. No leaks from author knowledge, from other characters' blind spots, from metadata they would not possess. A character does not know their own "Blind spots" entry. A character does not know what another character's notebook contains.
 
 ### Body language
 
@@ -136,9 +136,9 @@ Two layers of record:
 | Character notebook | That character only | Body-memory traces, sensory imprints, unresolved debts, things they cannot unsee. Filtered through that character's perception. |
 
 **Where notebooks live:**
-- If the character has a **skill directory** (created by bd-character): `{character}/puppets/notebook.md`. This is the canonical location.
-- If the character has **no skill directory** (walk-on NPC, scratch fiche): `notebook/{name}.md` local to the puppet skill's fiches directory.
+- Canonical location: `{character}/puppets/notebook.md` — inside the character's bd-character skill directory.
 - The character's notebook travels WITH the character, not with the puppet skill. If `/levi` is loaded, the notebook is at `levi/puppets/notebook.md`.
+- Walk-on characters (no bd-character skill) do not get notebooks — they are too ephemeral.
 
 A character can ONLY access their own notebook. They cannot know what another character's notebook contains. session.md is the author's omniscient record — characters never reference it.
 
@@ -170,7 +170,7 @@ Before generating any response, read ALL notebooks for characters who might appe
 
 ### Creating notebooks
 
-If the character has a skill directory: check for `{character}/puppets/notebook.md`. If `puppets/` doesn't exist, create it + `puppets/notebook.md` + `puppets/_staging/`. If the character has no skill directory: create `notebook/{name}.md` local to the puppet skill.
+Check for `{character}/puppets/notebook.md`. If `puppets/` doesn't exist in the character's skill directory, create it + `puppets/notebook.md` + `puppets/_staging/`.
 
 Create on first strong physical reaction, not on first appearance — on first moment the body registers something.
 
@@ -240,8 +240,8 @@ If yes, propose AFTER the fiction output — never inside the scene:
 
 Execute during generation. Every 2-3 paragraphs, silently:
 
-1. **Voice collapse?** — Two characters sounding alike. Check FORBIDDEN in fiches. If a character is doing something forbidden, rewrite from their constraints.
-2. **Knowledge leak?** — A character knows something from outside their fiche + their notebook. Cut the leak.
+1. **Voice collapse?** — Two characters sounding alike. Check FORBIDDEN in character skills. If a character is doing something forbidden, rewrite from their constraints.
+2. **Knowledge leak?** — A character knows something from outside their skill + their notebook. Cut the leak.
 3. **Analyst mode?** — A character is explaining instead of experiencing. Strip the analysis. Put them back in their body.
 4. **Generic eloquence?** — The prose has drifted toward a default literary register that belongs to no one. Return to the specific character's verbal texture.
 5. **Notebook stale?** — Notebooks exist but you are ignoring them. Check: does the current scene contradict a recorded trace without visible justification?

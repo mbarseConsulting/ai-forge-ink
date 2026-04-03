@@ -49,6 +49,8 @@ bd-emotions outputs live inside the character's skill directory, following the s
 - The author reviews and promotes staging content manually
 - Never write directly to a character's permanent files from a live session
 
+**Output format:** The emotional profile template uses markdown format (## headings, ### sub-headings, **bold** fields). Output must match this format — not code blocks.
+
 ### Resolving the character path
 
 The caller (bd-character, puppet-ink, or the author) provides the character path. If not provided, ask: "Which character? Provide the path to their skill directory."
@@ -76,8 +78,9 @@ These are invoked silently. The author sees the profile, not the tooling.
 3. Cross-reference the character's history with the variation factors
 4. Identify their defense repertoire, triggers, and habitual chains
 5. Fill the emotional profile template
+6. Produce cross-references: every wound links to a bd-character Psychology element (wound/lie/vulnerability), every defense maps to a numbered core defense mechanism, every trigger links to a bd-memory entry or declares "no entry yet"
 
-**Output:** A complete emotional profile using the template at `skills/bd-emotions/references/template-emotional-profile.md`. Read the template first — it contains both the structure and the rules for filling it. The profile must be CHARACTER-SPECIFIC — generic profiles are failures.
+**Output:** A complete emotional profile using the template at `skills/bd-emotions/references/template-emotional-profile.md`. Read the template first — it contains both the structure and the rules for filling it. The profile must be CHARACTER-SPECIFIC — generic profiles are failures. After producing the profile, run the template's 13-item checklist. Verify the standalone coherence declaration — the profile must be usable without reading core.md.
 
 ### Evolve Mode (`--evolve`)
 
@@ -146,9 +149,16 @@ NEW:
 
 UNCHANGED (but tested):
 - [field]: held under pressure — [why it survived this event]
+
+bd-memory link: [which memory entry records the event that caused this delta, or "no entry yet"]
+bd-character state impact: [does this delta warrant a state.md update? yes/no. If yes, which field.]
 ```
 
-The delta is appended to the profile, not merged. The author decides when to consolidate. This preserves the character's emotional history as a visible trail, not just a current state.
+The delta is appended to the profile's **DELTA LOG** section (append-only, never overwrite, never reorder). The author decides when to consolidate deltas into the main profile. This preserves the character's emotional history as a visible trail, not just a current state.
+
+**Cross-references in deltas are mandatory:**
+- `bd-memory link` connects the delta to the memory entry that records the causing event
+- `bd-character state impact` flags whether the character's state.md needs updating
 
 ---
 
@@ -162,7 +172,7 @@ The delta is appended to the profile, not merged. The author decides when to con
 3. Check the felt/shown/said gap — are all three layers present? Is the gap too narrow (aligned = flat) or too convenient?
 4. Check variation — would a different character produce the same reaction? If yes, the reaction is generic
 5. Check choreography — do emotions chain naturally or jump without transition?
-6. If a character profile exists, check coherence — does this reaction match their wounds, defenses, and triggers?
+6. If a character profile exists, check coherence — does this reaction match their wounds, defenses, and triggers? Also verify cross-reference integrity — do the profile's bd-character Psychology links and bd-memory links still point to valid, current entries?
 
 **Output:** A diagnostic report:
 - Emotional moments found (with line references)
@@ -180,6 +190,7 @@ The delta is appended to the profile, not merged. The author decides when to con
 1. Is this character's reaction coherent with who they are?
 2. Are there obvious anti-patterns?
 3. Is the felt/shown/said gap present?
+4. If an emotional profile exists with cross-references, verify that the cross-refs are still accurate — has a wound shifted in core but not in the profile? Has a new memory entry been created that should link to a trigger?
 
 **Output:** Short verdict — COHERENT / FLAGS / INCOHERENT, with brief evidence.
 
@@ -191,6 +202,8 @@ The delta is appended to the profile, not merged. The author decides when to con
 - Make every recommendation character-specific. "Add more body language" is a failure. "This character's shame lives in their hands — they fidget with their ring when the wound is touched" is useful.
 - Name the anti-pattern when you flag one. Quote the encyclopedia entry.
 - Distinguish between what the character FEELS, what they SHOW, and what they SAY. If your recommendation collapses these, start over.
+- Cross-reference every wound, defense, and trigger with bd-character Psychology and bd-memory entries. Orphan fields (wounds with no core link, triggers with no memory link) are either errors or gaps to flag.
+- Run the template checklist after producing any profile or delta. Report failures to the author.
 
 ### What you NEVER do
 

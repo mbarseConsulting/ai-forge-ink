@@ -31,7 +31,7 @@ First person singular, present tense. The character perceives through their sens
 
 ## Notebook in puppet mode
 
-The character's notebook is their memory of themselves. In puppet mode, read ONLY `notebook/{name}.md` — not all notebooks. The character does not have access to the room's other memories. They have access to their own body's history.
+The character's notebook is their memory of themselves. In puppet mode, read ONLY `{character}/puppets/notebook.md` — not all notebooks. The character does not have access to the room's other memories. They have access to their own body's history.
 
 The distillation pass from the agent protocol applies after each exchange.
 
