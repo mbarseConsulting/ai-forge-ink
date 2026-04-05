@@ -91,14 +91,15 @@ For each character, for each required element:
 
 **Extraction priority order:**
 1. `SKILL.md` — portrait (always first, loaded whole)
-2. `core/writing-rules.md` — voice and guardrails (loaded whole when the character has page time)
-3. `snapshots/{current}/state.md` — current deltas (because it overrides core)
-4. `snapshots/{current}/relations/{present-character}.md` — if tension axis fires
-5. `core/core.md` Psychology section — if depth is triggered (extract, not whole file)
-6. `snapshots/{current}/emotional-profile.md` — if emotion axis fires at depth (extract relevant sections)
-7. `snapshots/{current}/memory/` — only entries whose TRIGGER matches the brief
-8. `puppets/notebook.md` — if resuming a session
-9. World bible sections — only if location/rule verification needed
+2. `core/writing-rules.md` — permanent guardrails (loaded whole when the character has page time)
+3. `snapshots/{current}/writing/*` — compiled writing rules (PREFERRED over raw encyclopedia). If writing/ exists, load voice.md, body.md, and relevant entries from relations.md and emotions.md. These replace the need for core/core.md and emotional-profile.md in surface mode.
+4. `snapshots/{current}/state.md` — current deltas (because it overrides core)
+5. `snapshots/{current}/relations/{present-character}.md` — if tension axis fires AND no writing/relations.md exists
+6. `core/core.md` Psychology section — if depth is triggered OR no writing/ exists (extract, not whole file)
+7. `snapshots/{current}/emotional-profile.md` — if emotion axis fires at depth OR no writing/emotions.md exists
+8. `snapshots/{current}/memory/` — only entries whose TRIGGER matches the brief
+9. `puppets/notebook.md` — if resuming a session
+10. World bible sections — only if location/rule verification needed
 
 ### Step 6 — Compose the casting call
 

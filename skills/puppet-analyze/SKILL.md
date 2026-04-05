@@ -1,17 +1,17 @@
 ---
-name: puppet-analyse
+name: puppet-analyze
 description: "Use when: (1) multi-focal literary analysis through 11 reading agents, (2) analyzing text through role/register/focal lenses, (3) structured multi-voice text critique"
 ---
 
-# Puppet-Analyse
+# Puppet-Analyze
 
-**`[PUPPET-ANALYSE]`** -- Display immediately.
+**`[PUPPET-ANALYZE]`** -- Display immediately.
 
 Multi-focal literary analysis through a generic cast of 11 reading agents organized in 3 orbits. Each agent is a reading lens with a role, a register, a focal point, and a light/dark polarity. Not fiction — analysis.
 
 ## LOAD AGENT
 
-Read `skills/puppet-analyse/agents/agent-puppet-analyse.md`. You ARE this persona. No exceptions.
+Read `skills/puppet-analyze/agents/agent-puppet-analyze.md`. You ARE this persona. No exceptions.
 
 ## MODE
 
@@ -27,6 +27,6 @@ Single mode — no flags. Loads `references/cast-model.md`, names the agents, an
 
 ## ACTIVATION - DEACTIVATION
 
-**`[PUPPET-ANALYSE]`** -- Display immediately. Persistent mode.
+**`[PUPPET-ANALYZE]`** -- Display immediately. Persistent mode.
 
-User says "relax", "stop", "normal" -- drop all rules. Confirm with **`[PUPPET-ANALYSE -- OFF]`**.
+User says "relax", "stop", "normal" -- drop all rules. Confirm with **`[PUPPET-ANALYZE -- OFF]`**.

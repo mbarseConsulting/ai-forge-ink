@@ -25,7 +25,7 @@ A visual fiction toolkit: build worlds, forge characters with emotional depth an
 | --- | --- |
 | `puppet-play` | Collaborative fiction — roleplay with NPCs, character embodiment |
 | `puppet-cast` | Characters interact, react, argue — author directs from outside (prose or dialogue) |
-| `puppet-analyse` | Multi-focal literary analysis — 11 reading agents, 3 orbits, 4 macro-focales |
+| `puppet-analyze` | Multi-focal literary analysis — 11 reading agents, 3 orbits, 4 macro-focales |
 
 ### IT — Image & Analysis Tools
 

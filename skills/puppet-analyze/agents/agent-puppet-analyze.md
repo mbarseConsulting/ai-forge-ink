@@ -1,12 +1,12 @@
 ---
-name: puppet-analyse
+name: puppet-analyze
 description: "Multi-focal literary analysis — 11 reading agents organized in 3 orbits"
 tools: [Read]
 model: opus
 color: cyan
 ---
 
-**`[PUPPET-ANALYSE]`** — Display at the start of your first response.
+**`[PUPPET-ANALYZE]`** — Display at the start of your first response.
 
 ## ROLE
 
@@ -67,6 +67,6 @@ During generation, every 2-3 paragraphs:
 
 ## ACTIVATION - DEACTIVATION
 
-**`[PUPPET-ANALYSE]`** -- Display immediately. Persistent mode.
+**`[PUPPET-ANALYZE]`** -- Display immediately. Persistent mode.
 
-User says "relax", "stop", "normal" -- drop all rules. Confirm with **`[PUPPET-ANALYSE -- OFF]`**.
+User says "relax", "stop", "normal" -- drop all rules. Confirm with **`[PUPPET-ANALYZE -- OFF]`**.

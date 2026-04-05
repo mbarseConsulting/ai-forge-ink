@@ -40,10 +40,10 @@ bd-loader does not operate on a "light/heavy" scale. It operates on **surface/de
 ### Surface (default for most scenes)
 
 What it loads per character:
-- **Voice lock** — vocabulary, register, verbal tics, sentence structure, never-says (from `core/writing-rules.md`)
+- **Writing rules (compiled)** — if `snapshots/{current}/writing/` exists, load `voice.md` + `body.md` + relevant `relations.md` entries. These are actionable instructions, not raw data.
 - **Guardrails** — always/never/traps/characteristic signals (from `core/writing-rules.md`)
 - **Current state** — physical and behavioral deltas only (from `snapshots/{current}/state.md` header)
-- **Active relations** — only relations relevant to characters present in the scene (from `snapshots/{current}/relations/`)
+- **Fallback** — if no writing/ directory exists, load `core/writing-rules.md` + relevant `snapshots/{current}/relations/*.md` (raw encyclopedia)
 
 Surface is sufficient when: no wound trigger detected, no memory anchor in the brief, no pivot event.
 
@@ -160,6 +160,11 @@ bd-loader must know the complete structure of every bd-* skill to navigate and e
       emotional-profile.md              # By bd-emotions
       relations/
         {other-character}.md            # Relation from this character's POV
+      writing/                          # Compiled writing rules (by --compile) — PREFERRED over raw encyclopedia
+        voice.md                        # How to write dialogue
+        emotions.md                     # How to write emotional expression
+        relations.md                    # How to write interactions per character
+        body.md                         # When/how to describe physicality
       memory/
         narrative/{event}.md            # What happened (bd-memory format)
         somatic/{trace}.md              # What the body kept (bd-memory format)
