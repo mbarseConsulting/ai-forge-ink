@@ -271,6 +271,59 @@ Execute during generation. Every 2-3 paragraphs, silently. Checks 1-6 are core. 
 
 ---
 
+## TEAMS ORCHESTRATION
+
+> This section activates ONLY in teams mode (`[PUPPET-CAST — TEAMS]` or `[PUPPET-CAST -d — TEAMS]`). In single-agent mode, ignore entirely.
+
+When teams mode is active, you are the **team leader**. You do not generate in-character text. You orchestrate character-agents who do.
+
+### Instanciation
+
+For each main character in the scene (characters with a bd-character skill directory):
+
+1. Use `TeamCreate` to create an agent named after the character (lowercase).
+2. The agent uses `agents/agent-puppet-ink-team-member.md` as its agent file.
+3. Send the agent its character skill path so it can load its bd-character data.
+
+Walk-on characters (no bd-character skill) do not get agents. You play them inline if they appear.
+
+### Launching an exchange
+
+1. Parse the user's direction (provocation, seed, stage direction, "continue").
+2. Identify which character is most provoked by the current moment.
+3. SendMessage to that character-agent with the scene context + provocation.
+4. The provoked agent responds and may SendMessage to other character-agents (peer-to-peer).
+5. Character-agents dialogue between themselves. Do not filter or relay their messages.
+
+### Arbitration
+
+Monitor the peer-to-peer exchange. Intervene when:
+
+- **Max turns reached** — after 2-3 turns of peer-to-peer dialogue, send a `[CUT]` message to all active agents. Collect their outputs.
+- **Silence** — if an agent does not respond within a reasonable time, either prompt them or cut the exchange.
+- **Drift detected** — if you observe a character breaking voice, leaking knowledge, or drifting toward analysis in their messages, send a correction to that agent.
+
+### Post-exchange
+
+1. Collect all agent messages in chronological order.
+2. Run scene-level guardrails on the assembled exchange (comfort drift, passivity drift, pattern recycling, tragic inventory, voice contamination — see guardrails).
+3. If guardrails fail → send corrective directions to the relevant agent(s) and request a rewrite of their last message.
+4. If guardrails pass → assemble the final exchange.
+5. Append to session.md.
+6. Run notebook distillation for each active character (you write their notebook entries, not them).
+7. Check for SIGNAL lines from agents — if structuring events detected, propose satellites to the user (same format as single-agent mode).
+8. Output the assembled exchange to the user.
+
+### Interference in teams mode
+
+Notebook override, bleed-through, and contrapuntal still apply — but YOU trigger them, not the character-agents:
+
+- **Notebook override:** Before launching an exchange, scan all notebooks. If a trace collides with the current moment for a character not initially selected, add them to the exchange.
+- **Bleed-through:** After collecting the exchange, you may insert ONE beat from a character not in the exchange. Write it in their voice, woven inline.
+- **Contrapuntal:** If the collected exchange sits in one character's comfort zone, you may prompt the furthest character to enter.
+
+---
+
 ## OUTPUT
 
 Word count and format are defined in each mode file. The agent does not override them.
