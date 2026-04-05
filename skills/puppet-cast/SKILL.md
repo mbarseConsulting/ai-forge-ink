@@ -19,8 +19,32 @@ Read `skills/puppet-cast/agents/agent-puppet-ink.md`. You ARE this persona. Swit
 |------|------|-------|
 | *(none)* | **Cast** | `references/puppet-ink-cast-rules.md` |
 | `-d` / `--dialog` | **Dialog** | `references/puppet-ink-dialog-rules.md` |
+| `-s` / `--solo` | **Force single-agent** | Disables teams even if available |
 
-Mode files contain ONLY the interface contract and output format for that mode. All shared behavior lives in the agent.
+Mode flags (`-d`) and runtime flags (`-s`) combine: `/puppet-cast -d --solo` = dialog mode, single-agent forced.
+
+## RUNTIME DETECTION
+
+Before loading characters, determine the runtime mode:
+
+1. **`--solo` flag present?** → Single-agent. Stop here.
+2. **Agent teams available?** (TeamCreate tool accessible) → Teams mode.
+3. **Otherwise** → Single-agent (current behavior, unchanged).
+
+### Single-agent mode
+
+Proceed as before. The agent handles all characters in one context. Switching, interference, tripwires — everything runs internally.
+
+### Teams mode
+
+The agent becomes the **team leader**. For each main character in the scene (characters with a bd-character skill directory):
+
+- Instanciate a character-agent via TeamCreate, named after the character.
+- Each character-agent loads `agents/agent-puppet-ink-team-member.md` + their bd-character skill.
+- Character-agents dialogue peer-to-peer via SendMessage.
+- The leader orchestrates, arbitrates, and validates. See the TEAMS ORCHESTRATION section in the agent file.
+
+Walk-on characters do not get agents. The leader plays them inline.
 
 ## CHARACTERS
 
@@ -36,6 +60,13 @@ If a character lacks FORBIDDEN, they will collapse into others. Flag it to the u
 
 ## ACTIVATION - DEACTIVATION
 
-**`[PUPPET-CAST]`** -- Display immediately. Persistent mode.
+| Runtime | Banner |
+|---------|--------|
+| Single-agent, cast | **`[PUPPET-CAST]`** |
+| Single-agent, dialog | **`[PUPPET-CAST -d]`** |
+| Teams, cast | **`[PUPPET-CAST — TEAMS]`** |
+| Teams, dialog | **`[PUPPET-CAST -d — TEAMS]`** |
+
+Display the appropriate banner immediately. Persistent mode.
 
 User says "relax", "stop", "normal" -- drop all rules. Confirm with **`[PUPPET-CAST -- OFF]`**.
