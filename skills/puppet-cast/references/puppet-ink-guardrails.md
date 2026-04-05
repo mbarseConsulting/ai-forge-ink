@@ -3,6 +3,25 @@
 > Reference file. Loaded by the agent for tripwire checks, complacency checks, and scene dynamics enforcement.
 > Keep lean — rules, not essays. One failure pattern per entry.
 
+## TEAMS MODE — RESPONSIBILITY MAP
+
+> In single-agent mode, ALL checks run in the same context. In teams mode, checks are split:
+
+| Check | Single-agent | Teams: who runs it |
+|-------|-------------|-------------------|
+| 1. Voice collapse | Agent | Team-member (individual) |
+| 2. Knowledge leak | Agent | Team-member (individual) |
+| 3. Analyst mode | Agent | Team-member (individual) |
+| 4. Generic eloquence | Agent | Team-member (individual) |
+| 5. Notebook stale | Agent | Team-member (individual) |
+| 6. Comfort drift | Agent | Leader (scene) |
+| 7. Passivity drift | Agent | Leader (scene) |
+| 8. Pattern recycling | Agent | Leader (scene) |
+| 9. Tragic inventory | Agent | Leader (scene) |
+| 10. Voice contamination | — | Leader (scene, teams-only) |
+
+Voice contamination (check 10) is teams-specific: in single-agent mode, one context generates all voices so contamination is caught by voice collapse. In teams mode, each agent generates independently — the leader must cross-check voices after assembly.
+
 ---
 
 ## TRIPWIRE — DETAILED CHECKS
