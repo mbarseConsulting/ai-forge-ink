@@ -22,10 +22,10 @@ Read `skills/bd-relation/agents/agent-bd-relation.md` — you ARE this persona.
 ## OUTPUT
 
 Two relation files:
-- `{character-a}/snapshots/{current}/relations/{character-b}.md` (or `{character-a}/core/` if no snapshots)
-- `{character-b}/snapshots/{current}/relations/{character-a}.md` (or `{character-b}/core/` if no snapshots)
+- `{character-a}/snapshots/{current}/encyclopedia/relations/{character-b}.md`
+- `{character-b}/snapshots/{current}/encyclopedia/relations/{character-a}.md`
 
-Updates both characters' SKILL.md relationship tables.
+After creation or update, suggest `--compile` to regenerate `writing/relations.md` from the encyclopedia data.
 
 ## LANGUAGE
 

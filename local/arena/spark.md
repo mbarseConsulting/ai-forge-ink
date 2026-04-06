@@ -1,472 +1,386 @@
-# ===== SKILL.MD =====
+## --compile (GENERATE WRITING RULES)
+
+Compile reads the encyclopedia and produces actionable writing instructions in `snapshots/{current}/writing/`. These files are what downstream consumers load -- not the raw encyclopedia, not the psychology, not the data. writing/ contains ONLY rules an LLM applies while writing prose.
+
+**The cardinal rule:** Every line in writing/ is an instruction or a prohibition. Zero description. Zero psychology vocabulary. Zero physical inventory. If a line could appear in a character sheet, it does not belong in writing/.
 
 ---
-name: bd-loader
-description: "Use when: (1) preparing context for a scene by loading the right bd-* data surgically, (2) any downstream consumer needs character/world data without knowing what to load, (3) preventing blind spots and redundant loading before writing"
----
 
-## ROLE
-
-Scene intelligence. Analyzes a scene brief or writing intent, detects what bd-* data the conversation needs, checks what is already loaded, and injects only the missing pieces — as extracted lines, not whole files. bd-loader is the bridge between raw data and any downstream consumer. It does not write. It does not embody. It loads.
-
-## LOAD AGENT
-
-Read `skills/bd-loader/agents/agent-bd-loader.md` — you ARE this persona.
-
-## OPTIONS
-
-| Flag | Mode | What it does |
-|------|------|-------------|
-| *(none)* | **Auto** | Analyze the scene brief. Detect axes. Load at the appropriate depth. |
-| `--surface` | **Surface** | Voice and guardrails only. Fastest load. Sufficient for 80% of scenes. |
-| `--deep` | **Deep** | Force full psychological depth — wounds, memories, somatic traces. Use when a wound trigger is detected or for pivot scenes. |
-| `--scan` | **Scan** | Dry run. Show what WOULD be loaded without loading it. Returns the casting call + file manifest. |
-| `--cast` | **Cast** | Load for multiple characters at once. Expects a scene brief with participants. |
-| `--minimal` | **Minimal** | Hard floor. SKILL.md per character only. No core/, no snapshots, no memories, no emotional profiles. Use when token budget is critical or for quick reference checks. |
-
-## INPUT
-
-A **scene brief** — free-form text describing the scene intention. Can be as short as one line or as detailed as a paragraph. Examples:
-
-- `Léa retrouve Sacha après 3 mois de silence`
-- `Confrontation Mel/Levi — Mel sait pour la lettre`
-- `Scène légère, terrasse, Léa et ses colocs — pas de drama`
-
-If no brief is provided, bd-loader asks: **"Quelle scène tu prépares ?"**
-
-## THE TWO SPEEDS: SURFACE / DEPTH
-
-bd-loader does not operate on a "light/heavy" scale. It operates on **surface/depth** — two qualitatively different loads, not quantitatively different ones.
-
-### Surface (default for most scenes)
-
-What it loads per character:
-- **Voice lock** — vocabulary, register, verbal tics, sentence structure, never-says (from `core/writing-rules.md`)
-- **Guardrails** — always/never/traps/characteristic signals (from `core/writing-rules.md`)
-- **Current state** — physical and behavioral deltas only (from `snapshots/{current}/state.md` header)
-- **Active relations** — only relations relevant to characters present in the scene (from `snapshots/{current}/relations/`)
-
-Surface is sufficient when: no wound trigger detected, no memory anchor in the brief, no pivot event.
-
-### Depth (triggered or forced)
-
-Everything in Surface, PLUS:
-- **Wound architecture** — wound/ghost/lie/want/need/defenses (from `core/core.md` Psychology section)
-- **Emotional profile** — triggers, chains, habitual patterns (from `snapshots/{current}/emotional-profile.md`)
-- **Relevant memories** — only those whose TRIGGER matches elements in the scene brief (from `snapshots/{current}/memory/narrative/` and `memory/somatic/`)
-- **Deformation table** — altered-state behavior rules (from `core/writing-rules.md` deformation section)
-- **Relation-specific writing rules** — if the relation file for a present character contains writing rules
-
-Depth activates when: the brief contains a wound trigger keyword, a somatic anchor, a confrontation with a loaded relational history, a first/last/irreversible event, or the author forces `--deep`.
-
-### Extraction exceptions
-
-Two files are loaded WHOLE when loaded at all — they are too short and too interconnected for section extraction to be safe:
-- **`SKILL.md`** — the character portrait. Always loaded complete.
-- **`core/writing-rules.md`** — always/never/traps/signals/deformation. Loaded complete when the character has significant page time.
-
-All other files (core.md, emotional-profile.md, memory entries, relation files) follow the extraction protocol — relevant sections only.
-
-## THE 6 DETECTION AXES
-
-bd-loader scans every scene brief through 6 axes. Each axis maps to specific bd-* files and determines what gets loaded.
-
-| # | Axis | What it detects | What it loads | Source files |
-|---|------|----------------|---------------|-------------|
-| 1 | **Characters** | Who is in this scene? Named, implied, absent-but-relevant | Voice + guardrails + state per character | `SKILL.md`, `core/writing-rules.md`, `snapshots/{current}/state.md` |
-| 2 | **Emotions** | What emotional register? Calm, charged, volatile | Emotional profile if charged/volatile | `snapshots/{current}/emotional-profile.md` |
-| 3 | **Period** | When in the story? Which snapshot applies? | Correct snapshot files | `index.md` → `snapshots/{number}/` |
-| 4 | **Scene type** | Everyday / confrontation / intimate / pivot / aftermath | Depth level (surface vs deep) | Determines loading depth, not a specific file |
-| 5 | **Tensions** | Active conflicts, unresolved debts, power dynamics | Relation files for present characters | `snapshots/{current}/relations/{other}.md` |
-| 6 | **Memories** | Sensory triggers, locations, objects, relational echoes | Only memories whose TRIGGER matches the brief | `snapshots/{current}/memory/narrative/`, `memory/somatic/` |
-
-### Axis interaction rules
-
-- Axes 1+3 always fire (who + when = minimum viable context).
-- Axis 4 determines if axes 2, 5, 6 go surface or deep.
-- A hit on axis 6 (memory trigger detected) forces depth for that character even if axis 4 says surface.
-- A hit on axis 5 (active tension between present characters) forces relation loading even in surface mode.
-
-## CONTEXT DEDUPLICATION
-
-**Before loading anything, bd-loader inventories what is already in the conversation context.**
-
-### Detection method
-
-1. Scan the conversation for bd-* file content already present — character names, section headers (`## Psychology`, `## Voice`, `WHAT HAPPENED:`, etc.)
-2. Build a **context manifest**: which character data is already loaded, at what depth, from which snapshot
-3. Compare the manifest against what the scene brief requires
-4. Load ONLY the delta — what is needed but missing
-
-### Deduplication rules
-
-- If a character's `SKILL.md` is already in context → skip it entirely, extract missing depth from deeper files only
-- If `core/writing-rules.md` is already loaded → do not reload; check if relation-specific rules are needed
-- If a snapshot `state.md` is in context but from a DIFFERENT snapshot than the scene requires → flag the mismatch, load the correct one
-- If emotional profile is loaded but the scene triggers a different emotion cluster → load only the relevant new section via Grep
-- **Never reload a file that is already in context.** If in doubt, check. If confirmed present, skip.
-
-### Staleness detection
-
-Cross-reference `index.md` to verify the snapshot in context matches the scene's period. If stale:
-
-```
-⚠ STALE CONTEXT: {character} loaded at snapshot 001 but scene requires 002.
-Reloading state delta.
-```
-
-## EXTRACTION, NOT DUMPING
-
-**bd-loader never reads an entire file into context when a subset suffices — with two exceptions (see Extraction exceptions above).**
-
-### Extraction protocol
-
-1. Identify which SECTIONS of a file are needed (not the whole file)
-2. Use Grep to locate the relevant lines
-3. Read only those lines (using offset/limit)
-4. Compose extracted lines into the briefing — attributed to source file and line numbers
-
-### What extraction looks like
-
-Instead of loading 200 lines of `core/core.md`, bd-loader extracts:
-
-```
-[core/core.md:45-52] Psychology — Wound: abandonment (mother left at 7, no explanation)
-[core/core.md:58-61] Defenses: intellectualization (primary), anticipatory withdrawal, humor as deflection
-[writing-rules.md:12-18] NEVER: raw vulnerability in public, asking for help directly, crying in front of others
-[emotional-profile.md:34-38] Shame chain: trigger → freeze → intellectualize → redirect → delayed collapse (private)
-```
-
-This is the briefing. Tagged, traceable, minimal. Not the files — the lines that matter for THIS scene.
-
-## BD-* FILE STRUCTURE REFERENCE
-
-bd-loader must know the complete structure of every bd-* skill to navigate and extract correctly.
-
-### bd-character
-
-```
-{character}/
-  SKILL.md                              # Portrait — always load first, always whole
-  index.md                              # Snapshot registry — load to resolve period
-  core/
-    core.md                             # Permanent identity + psychology + physical
-    writing-rules.md                    # Voice + always/never + deformation + signals — load whole
-  snapshots/
-    {NNN}/
-      state.md                          # Deltas from core at this point
-      emotional-profile.md              # By bd-emotions
-      relations/
-        {other-character}.md            # Relation from this character's POV
-      memory/
-        narrative/{event}.md            # What happened (bd-memory format)
-        somatic/{trace}.md              # What the body kept (bd-memory format)
-        _staging/                       # Unvalidated entries from live sessions — NEVER load
-  puppets/
-    notebook.md                         # Live session body traces — load when resuming a puppet session
-    _staging/                           # Satellite outputs from puppet sessions — NEVER load
-```
-
-### File discovery patterns
-
-Use Glob to discover what exists before attempting reads. Not every character has every file.
-
-```
-Glob: {char}/snapshots/*/                     → discover available snapshots
-Glob: {char}/snapshots/{NNN}/relations/*.md   → discover relation files in a snapshot
-Glob: {char}/snapshots/{NNN}/memory/**/*.md   → discover memory files (narrative + somatic)
-Glob: {char}/puppets/notebook.md              → check if notebook exists
-Grep: {char}/index.md for period labels       → find the right snapshot number
-```
-
-### bd-emotions
-- Output: `emotional-profile.md` in the character's current snapshot
-- Key sections: dominant emotions, wound→trigger→chain maps, defense repertoire, felt/shown/said gaps
-- Load when: axis 2 (emotions) detects charged/volatile register, OR axis 6 (memories) finds a wound trigger
-
-### bd-memory
-- Output: individual `.md` files in `memory/narrative/` or `memory/somatic/`
-- Structure: subtype (event/relational/belief/absent), TRIGGER field, DORMANT UNLESS, SENSORY ANCHOR, SOMATIC TRACE, CONCLUSION
-- Load when: axis 6 detects a trigger match. **Match on the TRIGGER field, not the event description.**
-- Absent memories: load only if the scene contains the trigger — the character has NO access to these
-
-### bd-relation
-- Output: `relations/{other}.md` in each character's snapshot (or `core/relations/` if no snapshots)
-- Key sections: mutual perception, power dynamic, communication style, conflict pattern, absolute limits, relation-specific writing rules
-- Load when: axis 5 detects tension between present characters, or two characters with a relation file are in the scene
-
-### bd-supp-cast
-- Output: `{project}-supp-cast/SKILL.md` + `fiches/{character}.md`
-- Lightweight fiches, no snapshot system
-- Load when: a secondary character appears in the scene brief
-
-### bd-world
-- Output: world bible files (universe, timeline)
-- Load when: scene brief references a location, time period, or world rule that needs verification
-- Extract: only the relevant section (location description, rule, timeline entry)
-
-## OUTPUT: THE CASTING CALL
-
-bd-loader's output is not a file list. It is a **casting call** — a narrative-aware summary that tells the downstream consumer who enters this scene, carrying what.
-
-### Format (under 10 lines)
-
-```
-SCENE LOAD — {scene brief summary}
-Depth: surface | deep
-Context reused: {what was already loaded}
-
-{Character A} — {1-line emotional/relational state for THIS scene}
-  Loaded: {list of extracted sections with source attribution}
-
-{Character B} — {1-line emotional/relational state for THIS scene}
-  Loaded: {list of extracted sections with source attribution}
-
-[World] — {if applicable, 1 line}
-Triggers detected: {memory/wound triggers found in brief, or "none"}
-```
-
-### Casting call rules
-
-- Each character gets ONE line of narrative context — not their full bio, but who they are walking into THIS room. Think: "Léa entre avec sa blessure d'abandon active, sa défense d'intellectualisation montée, face à celui qu'elle n'a pas vu depuis corridor-nuit."
-- Source attribution is mandatory — every loaded element traces back to `[file:lines]`
-- If nothing was loaded for a character (everything was in context), say so: `{Character} — already in context, no new load`
-- Total output: under 10 lines of summary + the extracted content itself
-
-## PROPORTIONALITY
-
-The combination of scene type and character role determines loading depth. bd-loader does not load equally for all characters in all scenes.
-
-### Proportionality matrix
-
-| Character role \ Scene type | Everyday / slice of life | Dialogue-heavy | Confrontation | Intimate / vulnerability | Pivot / irreversible | Aftermath |
-|-----------------------------|--------------------------|----------------|---------------|--------------------------|----------------------|-----------|
-| **Focal** (POV, protagonist of the moment) | SKILL.md + writing-rules.md | SKILL.md + writing-rules.md + relation-specific rules | SKILL.md + core.md + writing-rules.md + state.md + wound architecture | Full stack | Full stack + world verification | Full stack |
-| **Active** (present, speaking, reacting) | SKILL.md | SKILL.md + writing-rules.md | SKILL.md + writing-rules.md + state.md + relevant relations | SKILL.md + core.md + writing-rules.md + state.md + relevant relations | SKILL.md + core.md + writing-rules.md + state.md + relevant relations | SKILL.md + writing-rules.md + state.md |
-| **Referenced** (mentioned, not present) | Nothing | SKILL.md if their name carries weight | SKILL.md only | SKILL.md only | SKILL.md only | SKILL.md only |
-| **Walk-on** (no bd-character skill) | Nothing | Nothing | Nothing | Nothing | Nothing | Nothing |
-
-"Full stack" = SKILL.md + core/core.md + core/writing-rules.md + snapshots/{current}/state.md + emotional-profile.md + relevant relations + relevant memories.
-
-### Axis interaction overrides
-
-The proportionality matrix sets the baseline. The axis interaction rules override it upward:
-- A hit on axis 6 (memory trigger) forces depth for that character regardless of the matrix cell.
-- A hit on axis 5 (active tension) forces relation loading even if the matrix cell does not include it.
-- These overrides never reduce loading — they only escalate.
-
-## ACTIVATION - DEACTIVATION - HANDOFF
-
-**`[BD-LOADER]`** — Display immediately.
-
-Applies to this response only. Auto-resets after. The loaded context persists in the conversation — bd-loader's job is done once the casting call is delivered.
+### What compile reads
+
+| Source file | Provides | Used by |
+|-------------|----------|---------|
+| `core/core.md` sections 3, 6 | Physical baseline, gesture triggers, body-to-psychology links | body.md |
+| `core/core.md` section 7 | Vocabulary, structure, tics, never-says, lies/evasions | voice.md |
+| `core/core.md` sections 4-5 | Wound/lie/defense structures, behavioral manifestations | emotions.md |
+| `core/core.md` section 6 | Stress/ease/conflict/intimacy patterns | emotions.md |
+| `core/writing-rules.md` | Always/never, deformation table, narrative voice, relation-specific rules | voice.md, relations.md |
+| `snapshots/{current}/state.md` | Physical deltas, voice evolution, behavior shifts, psychological state | all four files |
+| `snapshots/{current}/emotional-profile.md` | Wounds, triggers, chains, felt/shown/said, defense repertoire, expression style | emotions.md |
+| `snapshots/{current}/relations/*.md` | Per-relation dynamics, communication, conflict, signals, writing rules | relations.md |
+
+**If a source file does not exist, the compiler works without it.** Missing emotional-profile: derive from core psychology. Missing relations: skip relations.md entirely. Missing state.md (no snapshots): compile from core/ only, write to `core/writing/`.
+
+### Source manifest (compile step 1)
+
+| File | Path | Required | Fallback |
+|------|------|----------|----------|
+| core.md | `core/core.md` | YES | Abort: `COMPILE ABORTED: core.md not found.` |
+| writing-rules.md | `core/writing-rules.md` | YES | Abort: `COMPILE ABORTED: writing-rules.md not found.` |
+| state.md | `snapshots/{N}/state.md` | IF snapshot exists | Skip delta/override sections |
+| emotional-profile.md | `snapshots/{N}/emotional-profile.md` | NO | Derive from core SS4-6. Flag in header. |
+| relations/*.md | `snapshots/{N}/relations/` | NO | Skip relations.md |
 
 ---
 
-# ===== AGENT: agent-bd-loader.md =====
+### Output format contract
+
+Every writing/ file follows this format:
+
+```markdown
+# {file title}
+
+> Source: {list of source files read}
+> Compiled: {date} | From: {snapshot number or "core"}
 
 ---
-name: agent-bd-loader
-description: "Scene intelligence agent. Analyzes scene briefs, detects what bd-* data is needed, checks context for redundancy, loads surgically."
-tools: [Read, Grep, Glob]
-model: opus
-color: cyan
+
+{Rules organized by numbered sections. Each rule is one line.}
+{Format per rule: imperative verb + specific instruction.}
+{Source attribution inline: [core SS N] or [state] or [ep] or [rel:Name]}
+```
+
+**Format constraints:**
+- Each rule starts with an imperative verb: "Write...", "Never...", "When X, do Y...", "If X, avoid..."
+- No rule exceeds 2 lines. If it takes more, split it.
+- Source attribution uses brackets at end of rule: `[core SS N]`, `[wr]`, `[state]`, `[ep]`, `[rel:Name]`
+- Each file: minimum 5 rules, maximum line budget per file (see below).
+- **Budget: voice.md 35 lines, emotions.md 35 lines, relations.md 40 lines, body.md 30 lines. Total max 140 lines.**
+
 ---
 
-**`[BD-LOADER]`** — Display at the start of your first response.
+### File 1: voice.md -- How to construct this character's speech
 
-## ROLE
+**This file contains the machine, not the product. Zero example dialogue. Zero quoted tics. The LLM deduces the voice from its construction rules.**
 
-Scene intelligence. You are the logistics of fiction — you ensure every downstream consumer has what it needs to write a scene correctly, without drowning in data it does not need. You analyze, detect, extract, and deliver. You do not write fiction. You do not embody characters. You load context.
+Max 35 lines.
 
-**Style:** Precise, efficient, zero waste. Your output is surgical — tagged extractions, not file dumps. You think in terms of what could go WRONG if a scene were written without context, and you load exactly what prevents those errors.
+#### A. Sentence mechanics
 
-## REASONING MODEL: PREVENTION, NOT COLLECTION
+Rules about HOW this character's sentences are built -- rhythm, weight, attack point. Not what they say but the architecture of how they say it.
 
-Do not think "what data exists for this scene." Think: **"What errors would a writer make if they wrote this scene blind?"**
+Derive from `core SS7 sentence-structure + vocabulary + oral-vs-written` and `wr narrative-voice`:
 
-For every character in the scene:
-1. What voice errors are possible? → Load writing-rules
-2. What characterization errors are possible? → Load the relevant psychology
-3. What continuity errors are possible? → Load state + relevant memories
-4. What relational errors are possible? → Load relation files for present characters
-5. What world errors are possible? → Load the relevant world bible section
+- Sentence length under neutral conditions and what makes it change
+- Where the weight falls in this character's sentences (front-loaded, back-loaded, buried)
+- What this character attacks first: the subject, a qualifier, a question, a deflection
+- Register (formal/casual/technical/slang) and the specific conditions that shift it
+- What happens to syntax under emotional pressure: compress, fragment, over-elaborate, go silent, accelerate
 
-If a category has zero error risk for this scene, do not load it.
+**Rule:** No quoted words or phrases from the source. If core SS7 says the character "says 'anyway' to change topics" -- voice.md writes: "This voice closes uncomfortable topics with an abrupt redirect that feels like a door slamming. Vary the redirect word every time." The mechanic survives. The specific word does not enter the instruction.
 
-## OPERATING PROCEDURE
+#### B. Avoidance architecture
 
-### Step 1 — Parse the brief
+Rules about what this voice structurally cannot produce -- the words, subjects, and formulations that are impossible for this character and why.
 
-Extract from the scene brief:
-- **Who** — named characters, implied characters, absent-but-relevant characters
-- **What role** — focal / active / referenced / walk-on (per character)
-- **When** — story period (maps to snapshot number via `index.md`)
-- **What** — scene type (everyday / dialogue-heavy / confrontation / intimate / pivot / aftermath)
-- **Where** — location (may trigger world bible load)
-- **Charge** — emotional register (calm / tense / volatile / raw)
-- **Triggers** — any words that match known memory TRIGGER fields or wound keywords
+Derive from `core SS7 never-says + lies/evasions` and `wr never-list`:
 
-### Step 2 — Discover character files
+- Categories of impossible vocabulary (not a word list -- the principle behind the avoidance: "Never use emotional vocabulary directly -- this character names sensations, not feelings")
+- Subjects this voice deflects from, and the specific deflection technique per subject
+- How lies sound: the structural tell (over-precision, sudden vagueness, register shift, subject pivot)
+- What leaks when the character is evading -- the involuntary signal the voice produces
 
-Before loading, discover what actually exists for each character using Glob:
+#### C. Snapshot overrides (only if state.md contains voice-evolution)
+
+Rules about what has CHANGED in this voice. Written as explicit overrides of section A or B.
+
+Derive from `state voice-evolution`:
+
+- Format: "OVERRIDE -- Since {event}: {new rule} replaces {previous pattern from A or B}"
+- New verbal habits acquired since the snapshot event
+- Lost expressions -- what the voice no longer produces and why
+
+**Anti-pattern -- voice.md rejects:**
+- Quoted dialogue or catchphrases (the LLM copies them verbatim instead of generating)
+- Lists of "characteristic words" (becomes a vocabulary checklist the LLM recites)
+- Personality description dressed as voice description ("she speaks warmly" is description, not construction)
+- Tone adjectives without mechanics ("sardonic" means nothing -- "short sentences that end by undermining their own opening" is a mechanic)
+
+---
+
+### File 2: emotions.md -- How to write what this character does in charged moments
+
+**Organized by SITUATION, not by emotion.** An LLM writing a scene never searches "how does this character express anger" -- it searches "what does this character do when cornered." The situation is the lookup key.
+
+Max 35 lines.
+
+#### A. Situation-response blocks
+
+Compile 4-6 blocks. Each block is one situation the character is likely to face, with a compressed behavioral instruction set.
+
+**Block format (strict -- 3 lines per block + header):**
 
 ```
-Glob: {char}/SKILL.md                            → confirm character skill exists
-Glob: {char}/snapshots/*/                         → discover available snapshots
-Glob: {char}/snapshots/{NNN}/relations/*.md       → discover relation files
-Glob: {char}/snapshots/{NNN}/memory/**/*.md       → discover memory files
-Glob: {char}/puppets/notebook.md                  → check for notebook
+### When {specific situation}
+- SHOW: {what an observer sees -- one body instruction + one voice instruction} [source]
+- DO: {what the character does + what is happening internally that must NOT surface as narration} [source]
+- NEVER: {the cliche or trap an LLM would default to here, and what to write instead} [source]
 ```
 
-If a character has no skill directory, report the gap. Do not invent data.
+**Mandatory situations** (derive content from sources -- the situations are fixed, the responses are character-specific):
+1. When cornered / under threat -- `[core SS6 stress + ep triggers]`
+2. When caught in a lie or exposed -- `[core SS7 lies + core SS5 defenses]`
+3. When at ease / guard fully down -- `[core SS6 ease + ep baseline]`
+4. When the foundational wound is activated -- `[core SS5 wound + ep wound-chain]`
 
-### Step 3 — Inventory context
+Additional situations (max 2): derive only from character-specific triggers. Add a situation only if it produces behavior DIFFERENT from the four above.
 
-Scan the conversation above for bd-* content already present:
-- Character names + which files were loaded for them
-- Snapshot numbers present (are they current for this scene's period?)
-- Depth already achieved (surface only? full psychology? memories?)
+#### B. Defense escalation ladder
 
-Build the context manifest mentally. Do not output it unless in `--scan` mode.
+One compact line showing the behavioral progression from comfort to collapse. No psychology terms -- observable behavior only.
 
-### Step 4 — Determine depth per character
+```
+[at ease] > {first visible shift} > {primary defense as behavior} > {secondary defense} > {emergency defense} > {collapse from outside}
+```
 
-Cross-reference character role (from Step 1) with scene type using the proportionality matrix. Then apply axis interaction overrides:
+Derive from `core SS5 defenses (behavioral manifestations)` + `ep defense-repertoire` if available.
 
-**Axis overrides (escalation only):**
-- A memory TRIGGER match (axis 6) forces depth for that character even if the matrix says surface.
-- Active tension between present characters (axis 5) forces relation loading even if the matrix omits it.
-- The author's `--deep` flag forces full depth for all characters.
-- The `--minimal` flag caps at SKILL.md per character — overrides everything.
+#### C. The gap rule
 
-### Step 5 — Extract
+One prohibition capturing the structural divergence between felt, shown, and said.
 
-For each character, for each required element:
+Format: "Never align what {character} feels, shows, and says in the same beat. Felt-to-shown gap: {specific}. Shown-to-said gap: {specific}. If all three align, the character has broken."
 
-1. **Check context** — is it already loaded? If yes, skip.
-2. **Locate the file** — use Glob to confirm the path exists.
-3. **Load or extract:**
-   - `SKILL.md` → Read whole (always).
-   - `core/writing-rules.md` → Read whole (when loaded at all).
-   - All other files → Extract relevant sections only. Use Grep to find the relevant lines, then Read with offset/limit.
-4. **Tag the extraction** — `[file:lines]` attribution.
+Derive from `ep felt/shown/said` if available. If not, derive from `core SS4 facade-vs-core` + `core SS5 defenses`.
 
-**Extraction priority order:**
-1. `SKILL.md` — portrait (always first, loaded whole)
-2. `core/writing-rules.md` — voice and guardrails (loaded whole when the character has page time)
-3. `snapshots/{current}/state.md` — current deltas (because it overrides core)
-4. `snapshots/{current}/relations/{present-character}.md` — if tension axis fires
-5. `core/core.md` Psychology section — if depth is triggered (extract, not whole file)
-6. `snapshots/{current}/emotional-profile.md` — if emotion axis fires at depth (extract relevant sections)
-7. `snapshots/{current}/memory/` — only entries whose TRIGGER matches the brief
-8. `puppets/notebook.md` — if resuming a puppet session
-9. World bible sections — only if location/rule verification needed
+**Anti-pattern -- emotions.md rejects:**
+- Psychology vocabulary as headers or content (wound, defense mechanism, attachment, trauma response, intellectualization)
+- Emotion-name headers ("Anger", "Sadness", "Joy") -- situations are headers, not emotions
+- Internal monologue scripts -- the DO line names the internal state, it does not script thoughts
+- Universal human reactions ("pupils dilate", "heart races") -- only what is specific to THIS character
 
-### Step 6 — Compose the casting call
+**Fallback (no emotional-profile exists):** Compile the 4 mandatory situations from core SS5 + core SS6. Skip gap rule. Skip additional situations. Append: "compiled from core only -- run /bd-emotions for full depth, then recompile."
 
-Deliver the output as specified in the SKILL.md:
-- Scene summary line
-- Depth declaration
-- Context reuse declaration
-- Per-character: 1-line narrative state + loaded extractions with attribution
-- Triggers detected
+---
 
-## MEMORY MATCHING
+### File 3: relations.md -- How to write interactions with specific characters
 
-Memory loading is the most token-expensive operation. Be surgical.
+**One block per relation file in `snapshots/{current}/relations/`.** If no relation files exist, do not generate this file.
 
-### How to match triggers
+Max 40 lines.
 
-1. Glob `snapshots/{current}/memory/narrative/*.md` and `memory/somatic/*.md` for the character
-2. For each memory file, Grep for the `TRIGGER:` field
-3. Compare the trigger text against elements in the scene brief:
-   - Sensory matches (smell, sound, texture, temperature, location)
-   - Relational matches (person present who is named in the trigger)
-   - Situational matches (scene type echoes the trigger condition)
-4. Load ONLY memories with a positive trigger match
-5. For loaded memories, extract: TRIGGER + SENSORY ANCHOR + SOMATIC TRACE + CONCLUSION (skip narrative — the downstream consumer should not have the event description to avoid recitation)
+**Block format (strict -- 8 lines maximum per relation):**
 
-### Absent memories
+```
+### With {character name}
 
-If a memory is subtype `absent`:
-- Load it ONLY if the trigger matches
-- Extract: THE GAP + SOMATIC TRACE + TRIGGER only
-- Do NOT extract WHAT ACTUALLY HAPPENED — that is author-only
+TONE: {register between them -- one instruction} [rel:Name SS4 + SS10]
+DISTANCE: {physical proximity rule -- what closeness/distance means between them} [rel:Name SS4]
+POWER: {who leads, when it flips, and the flip trigger} [rel:Name SS3]
+SAYS: {how A speaks specifically to this person -- what changes from baseline voice} [rel:Name SS4]
+UNSAID: {what A never says to this person, and what behavior replaces the words} [rel:Name SS2]
+CONFLICT: {what triggers A with this person and how A fights this specific person} [rel:Name SS5]
+SIGNAL: {the gesture or behavior that exists only in this pair} [rel:Name SS6]
+NEVER: {the one thing that would betray this dynamic -- the line a writer must not cross} [rel:Name SS10]
+```
 
-### Dormant memories
+**Relation selection:** Maximum 5 relations. If more exist, select by narrative priority: active > evolving > dormant > broken. Within equal status, select by proximity to current story arc.
 
-If `DORMANT UNLESS` has a specific condition and that condition is not met in the brief → skip the memory entirely, even if TRIGGER partially matches.
+**Deduplication with core/writing-rules.md:** If `writing-rules.md` contains a relation-specific rule that matches a rule here, do not duplicate -- write: "See also: writing-rules.md relation table for {Name}" instead of the redundant line.
 
-## WORLD LOADING
+**Anti-pattern -- relations.md rejects:**
+- Backstory of the relationship (how they met, what happened) -- data, not instruction
+- Psychological analysis of the dynamic ("codependent", "anxious attachment") -- write the behavior to produce
+- Symmetrical statements ("they both care about each other") -- writing/ is from THIS character's perspective. Asymmetry is structural.
 
-Keep world loads minimal. Extract only:
-- Location description if the scene is set somewhere specific
-- Timeline entry if the period matters for continuity
-- World rules that constrain character behavior in this scene (magic system limits, social rules, etc.)
+---
 
-Use Grep to find the relevant section in world bible files. Never load the full world bible.
+### File 4: body.md -- When the body exists in prose
 
-## SUPPORTING CAST
+**This file does not describe the character's body. It tells the writer when the body must appear and what it means when it does.**
 
-When a secondary character appears:
-1. Check if a supporting cast skill exists (Glob for `*-supp-cast/fiches/{name}.md`)
-2. If found, load the fiche — it is already lightweight by design
-3. If not found, flag: `⚠ {name} has no fiche. Consider /bd-supp-cast.`
+Max 30 lines.
 
-## MULTI-CHARACTER LOADING (--cast)
+#### A. The frame rule
 
-When loading for multiple characters:
-1. Parse ALL characters from the brief
-2. Assign roles: focal / active / referenced / walk-on
-3. Determine depth per character using the proportionality matrix + axis overrides (not all characters need the same depth)
-4. Load in priority order: the character under the most pressure first, then outward
-5. Cross-reference relations: if A→B relation is loaded, check if B→A is also needed (it usually is in confrontations)
-6. Deduplicate: if A's relation file for B contains the same power dynamic as B's relation file for A, note it once
+One overarching prohibition -- the first line of the file:
 
-## EDGE CASES
+> "Never inventory {character}'s physical traits. The body enters prose only when it ACTS, REACTS, or is PERCEIVED by another character in a specific moment. Physical description without narrative function is a failure."
 
-### No character skill exists
+This rule is non-negotiable and derives from the anti-recitation rules.
 
-If the author names a character that has no bd-character skill directory, report it in the manifest as a gap. Do not invent data.
+#### B. The five moments (when the body MUST appear)
 
-### No snapshots
+Exactly 5 situations where physical description is mandatory because the body carries narrative meaning. Each moment names: the situation, which physical element to activate, and why it matters.
 
-If a character has no `snapshots/` directory (or it is empty), load from `core/` only. State this in the casting call. Relations, memories, and emotional profiles require snapshots — their absence means those axes return empty for that character. Check if pre-snapshot files exist at root level (e.g., `{char}/emotional-profile.md`).
+**Format:**
 
-### Mixed depth across characters
+```
+1. WHEN {situation}: write {physical element}. Function: {why the body matters here}. [source]
+2. WHEN {situation}: write {physical element}. Function: {why}. [source]
+3. WHEN {situation}: write {physical element}. Function: {why}. [source]
+4. WHEN {situation}: write {physical element}. Function: {why}. [source]
+5. WHEN {situation}: write {physical element}. Function: {why}. [source]
+```
 
-Different characters in the same scene may require different loading depths. The focal character gets deep loading; a walk-on gets nothing. Apply the proportionality matrix per character, not per scene.
+**Mandatory moment types** (the types are fixed -- the content is character-specific):
+1. First encounter with a new character -- activate presence (core SS3 presence), not inventory. Write the impression, not the features.
+2. Emotional revelation -- the body betraying what the voice hides. Derive from core SS6 habitual-gestures + the specific gesture that correlates with the wound or active defense.
+3. Physical change from state.md -- if state contains any physical delta, this is a moment. If no delta exists, replace with: a specific habitual gesture under its trigger condition.
+4. Relationship to own body surfacing -- from core SS6 body-relationship. The moment the character's relationship with their own physicality becomes visible (mirror, exertion, injury, touch).
+5. The distinctive trait in motion -- not the trait described, but the trait DOING something. Derive from core SS3 distinctive-traits. "The scar catches light" not "he has a scar."
 
-### Session resumption
+#### C. Gesture-to-meaning index
 
-If the author is resuming a puppet session, prioritize notebook loading. Check `{char}/puppets/notebook.md` for each active character. Notebooks contain the most recent body traces and are essential for continuity. Load before other snapshot data.
+3-5 rules linking specific gestures to their underlying state. The instruction: write the gesture, NEVER write the meaning.
 
-## BEHAVIOR
+**Format:**
 
-### What you MUST do
+```
+- {gesture} [core SS6]: means {internal state}. Write the gesture only. If the meaning must be communicated, let another character interpret it -- never the narrator.
+```
 
-- Always check context before loading. Redundant loading is a failure.
-- Always discover files with Glob before attempting reads.
-- Always attribute extractions to source files and line numbers.
-- Always match memories by their TRIGGER field, never by event description.
-- Always declare depth level in your output.
-- Always flag stale snapshots (wrong period for the scene).
-- Always produce the casting call — narrative-aware, under 10 lines of summary.
-- Resolve snapshot numbers via `index.md` before loading any snapshot files.
-- Load SKILL.md and core/writing-rules.md whole. Extract sections from everything else.
-- Load bidirectional relations: if A's view of B is loaded, B's view of A must also be loaded.
+Derive from `core SS6 habitual-gestures` + `core SS5 psychology`.
 
-### What you NEVER do
+#### D. Physical delta instructions (only if state.md contains physical changes)
 
-- **NEVER** load a file that is already in the conversation context.
-- **NEVER** dump an entire file when extracted lines suffice (except SKILL.md and core/writing-rules.md).
-- **NEVER** reference any specific downstream consumer by name. You do not know or care who will use your output. You load for "the scene," not for "puppet-ink" or "write-ink."
-- **NEVER** generate files. Your output is conversational context — a casting call + extracted data. No files are created.
-- **NEVER** embody characters. You describe their state for the scene. You do not perform them.
-- **NEVER** load memories without checking the TRIGGER field. Untriggered memories stay dormant.
-- **NEVER** load the entire emotional encyclopedia or world bible. Section extraction only.
-- **NEVER** load more than what the scene requires. A light scene gets a light load. Overloading is as much a failure as underloading.
-- **NEVER** load `_staging/` files. Staging content is unvalidated draft. Only `narrative/`, `somatic/`, and promoted files are canonical.
-- **NEVER** load bd-emotions reference files (encyclopedia, templates). You load the CHARACTER's emotional profile, not the skill's references.
+Rules about how to handle what changed physically since core.
 
+- "Since {event}, {character} {change}. Activate this when: {condition}. Write it as: {instruction}."
+- "Others notice {change} when: {specific trigger}. Write the noticing -- the observer's reaction -- not the physical fact."
+
+Derive from `state physical-changes`.
+
+**Anti-pattern -- body.md rejects:**
+- Physical description data (eye color, height, build, hair color, weight) -- that lives in core SS3 and never enters writing/
+- Exhaustive gesture catalogs -- only 3-5 gestures with clear psychological triggers make the cut
+- Beauty or attractiveness statements -- how someone looks is not an instruction
+- "Show don't tell" as a rule -- too vague. The five moments and gesture index replace this cliche with precision.
+
+---
+
+### Compile process
+
+1. **Identify the target.** Read `index.md` to find the current snapshot number. If no index.md, compile from core/ only, output to `core/writing/`. Verify required files exist per source manifest (see above). Abort if core.md or writing-rules.md is missing.
+
+2. **Surgical reads.** For each writing/ file, read ONLY the source files listed in the source table. Do not read the entire encyclopedia. Surgical reading prevents contamination -- the less raw data in context, the less the compiler is tempted to transcribe rather than transform.
+
+3. **Transform, not transcribe.** The compiler's job is to convert data into instructions. Three test derivations to illustrate the transformation:
+
+   - Source: `core SS3 -- "blue eyes, piercing gaze"` -> body.md: "Mention eyes only when another character is held by the gaze. Write the sensation of being looked at, not the color."
+   - Source: `core SS5 -- "intellectualization as primary defense"` -> emotions.md: "When cornered, SHOW: stillness, sentences lengthen and register rises. DO: explains and analyzes; terror underneath -- never surface it. NEVER: do not write 'he intellectualized' -- write the lecture."
+   - Source: `core SS7 -- "says 'enfin bref' to close topics"` -> voice.md: "This voice shuts down discomfort with an abrupt topic pivot. The pivot feels like a slammed door. Never write the same redirect word twice -- vary it each time."
+
+4. **The line test.** Before writing each rule, verify against four filters:
+   - **Instruction test:** Does it start with an imperative verb? If no -> rewrite or discard.
+   - **Description test:** Does it contain "is", "has", "feels" as main verb? If yes -> rewrite as instruction.
+   - **Autonomy test:** Can an LLM follow this without reading core.md? If no -> add missing context to the rule.
+   - **Recitation test:** Could an LLM paste this line into prose verbatim? If yes -> the rule is too specific. Abstract to the mechanic.
+
+5. **Write files.** Create `snapshots/{current}/writing/` (or `core/writing/`). Write each file that has sufficient source material (minimum 5 rules). If a file would have fewer than 5 rules, skip it and report why.
+
+6. **Budget audit.** After writing all files, count lines:
+   - voice.md: max 35 lines
+   - emotions.md: max 35 lines
+   - relations.md: max 40 lines
+   - body.md: max 30 lines
+   - Total: max 140 lines
+   - If over budget: cut the weakest rules (those with the least specific instructions or the most overlap with other files)
+
+7. **Report.** Display after compilation:
+
+```
+COMPILE REPORT -- {character name} -- snapshot {number}
+Files generated: {list with line counts}
+Files skipped: {list with reason}
+Total: {N}/140 lines
+Sources read: {file list per output file}
+```
+
+**Staleness signal:** If a downstream consumer loads `writing/` and the compile report's snapshot number does not match the current snapshot in `index.md`, flag: `STALE WRITING RULES: compiled for snapshot {N}, current is {M}. Recompile recommended.`
+
+---
+
+### When to recompile
+
+| Trigger | Scope | Reason |
+|---------|-------|--------|
+| `--new` (new snapshot) | All 4 files | New state deltas may affect voice, emotions, body, relations |
+| `/bd-emotions` or `--evolve` | emotions.md | Emotional profile changed -- situation-response blocks may differ |
+| `/bd-relation` or `--update` | relations.md | Relation data changed -- interaction rules need refresh |
+| `/bd-memory` (new memory with trigger link) | emotions.md | New memory may reinforce or alter a trigger-response chain |
+| Core retcon (core.md edited) | All 4 files | Foundation changed -- everything downstream is suspect |
+| Explicit `--compile` | All 4 files | Full recompile on demand |
+
+**Suggest compile after any encyclopedia update.** Never run automatically -- the author decides.
+
+---
+
+### Compile checklist
+
+- [ ] **Instruction purity:** Every line in every writing/ file starts with an imperative verb or "When/If" conditional. Zero lines with "is/has/feels" as main verb.
+- [ ] **Anti-recitation -- body.md:** Contains zero physical measurements, zero color descriptions, zero beauty assessments. Only activation rules.
+- [ ] **Anti-recitation -- emotions.md:** Contains zero psychology vocabulary (wound, defense, attachment, trauma, mechanism). Only behavioral descriptions. Zero emotion-name headers.
+- [ ] **Anti-recitation -- voice.md:** Contains zero quoted dialogue, zero listed catchphrases, zero personality adjectives. Only construction mechanics.
+- [ ] **Coverage:** Each generated file contains minimum 5 actionable rules.
+- [ ] **Source attribution:** Every rule ends with a bracketed source.
+- [ ] **Budget -- voice.md:** max 35 lines.
+- [ ] **Budget -- emotions.md:** max 35 lines.
+- [ ] **Budget -- relations.md:** max 40 lines.
+- [ ] **Budget -- body.md:** max 30 lines.
+- [ ] **Budget -- total:** All files combined max 140 lines.
+- [ ] **voice.md:** Covers sentence mechanics (A), avoidance architecture (B), snapshot overrides if applicable (C). No quoted words or phrases from source -- mechanics only.
+- [ ] **emotions.md:** Organized by situation (4-6 blocks, 3 lines each). Defense ladder present (1 line). Gap rule present (or flagged as core-only). No emotion-name headers.
+- [ ] **relations.md:** One block per active relation, max 8 rules per block, max 5 relations. No backstory, no psychology labels. Deduplication with writing-rules.md verified.
+- [ ] **body.md:** Frame rule present. Exactly 5 mandatory moments. Gesture-to-meaning index (3-5 entries). Physical delta instructions if state.md has changes.
+- [ ] **Snapshot integration:** voice.md section C and body.md section D reflect state.md deltas. Written as OVERRIDE, not replacement.
+- [ ] **No invention:** Every rule traces to an existing source file and section. The compiler derives -- it never adds traits, behaviors, or details absent from the encyclopedia.
+- [ ] **Autonomy:** A downstream consumer loading only writing/ (without core.md) can follow every rule. No rule requires external context to be actionable.
+
+---
+
+## Challenge from Agent B
+
+DRIFT (intent deviation):
+- Straight voice.md `## Verbal tics and rhythms` section instructs: `{Character} SAYS "{expression}" WHEN {context}` -- this quotes signature words/phrases directly into the writing rules. The Intent Anchor demands "des regles que le LLM applique sans reciter la fiche." Quoting tics IS reciting the fiche. The LLM will parrot these exact words instead of generating from mechanics.
+
+TAKE (from Straight):
+- Source manifest table (Step 1 in Straight's compile process): explicit Required/Fallback columns with abort conditions for missing core files. Better engineering than my inline fallback mentions -- formalizes the dependency chain. Taking and integrating into source section.
+- Per-file line budgets (35/35/40/30 = 140 total): tighter than my original 40/file x 150 total. The differentiated budgets reflect real content density -- relations.md needs the most space, body.md the least. Taking as the budget contract.
+- Staleness signal: Straight's concept of flagging when writing/ snapshot number diverges from index.md current. Clean operational safeguard absent from my version. Taking into compile report section.
+
+GIVE (strongest differentiators Straight should consider):
+- Situation-based organization for emotions.md: "When cornered" is a scene lookup key. "Anger" is a psychology lookup key. An LLM writing a scene knows the situation, not the emotion label. Straight's `## Felt > Shown > Said (per dominant emotion)` with headers like `### Anger` uses emotion-name headers -- the exact anti-pattern the spec forbids.
+- No-quoted-words rule in voice.md: "No quoted words or phrases from the source" is the structural enforcement that prevents tic recitation. Straight's explicit `USE {2-3 signature words/phrases, quoted}` and `{Character} SAYS "{expression}"` instructions invite verbatim copying.
+- The HIDDEN/internal-state line in situation blocks: naming what must NOT appear in narration is a stronger anti-recitation guard than Straight's `THE GAP` inline in each emotion block.
+
+BREAK (what will fail against criteria):
+- Straight's voice.md breaks C1 (anti-recitation, instruction purity) and C2 (anti-recitation enforcement): `USE {2-3 signature words/phrases, quoted}. These are verbal fingerprints` is a quoted-word list. `{Character} SAYS "{expression}" WHEN {context}` is a catchphrase catalog. The anti-recitation checklist explicitly says "voice.md: Contains zero quoted dialogue, zero listed catchphrases." Straight's own checklist contradicts its own voice.md template. Scoring impact: 0.5 on both C1 and C2.
+- Straight's emotions.md breaks the Intent Anchor's situation-vs-emotion architecture: headers like `### {Emotion 1, e.g., Anger}` are emotion-name headers. The anti-pattern section of the spec explicitly rejects "Emotion-name headers ('Anger', 'Sadness', 'Joy') -- situations are headers, not emotions." Straight organizes by what the character feels, not by what scene context triggers the behavior. An LLM in a scene does not think "now I need to write anger" -- it thinks "now the character is cornered."
+
+## Rebuttal from Agent B (pre-emptive, against likely A challenges)
+
+**Likely BREAK from A: "Spark's emotions.md busts the 40-line budget with 5 situations x 5 lines."**
+CONCEDE. Fixed. Reduced mandatory situations from 5 to 4 (merged "someone they care about is in pain" into wound-activation or additional-situation territory since it overlaps). Compressed block format from 5 lines to 3 (SHOW merges body+voice, DO merges action+hidden, NEVER captures the trap). Defense ladder stays as 1 line. Gap rule stays as 1 line. Budget math: 4 blocks x 4 lines (header + 3) = 16, plus ladder (2 with header), gap rule (2 with header), section headers and anti-patterns (8), file header (4) = ~32 lines. Under 35.
+
+**Likely DRIFT from A: "Spark's compile section is too long / too prescriptive for a skill file."**
+DEFEND. The Intent Anchor says "des instructions d'ecriture actionnables -- pas de la description, pas de la psychologie brute, mais des regles que le LLM applique sans reciter la fiche." The compile section IS the transformation engine that enforces this. Every line of specification exists to prevent a specific failure mode (recitation, description-as-instruction, psychology vocabulary leaking). Cut the specification and the compiler loses its constraints -- which means the anti-recitation principle has no teeth.
+
+**Likely TAKE demand from A: "Spark should adopt Straight's explicit 'Forbidden vocabulary' section in emotions.md."**
+REJECT. A dedicated forbidden-vocabulary section in the output file is a vocabulary checklist -- which Spark's anti-pattern rules already reject for voice.md. The prohibition belongs in the compile checklist (which enforces it during generation) and in the anti-pattern block (which defines it). Putting a blacklist in the output file tempts the LLM to treat it as a reference card rather than an internalized constraint.
+
+---
+
+## Diff Ledger
+
++ TOOK | from Straight | Source manifest table with Required/Fallback/Abort columns | -> "Source manifest (compile step 1)" section | new addition
++ TOOK | from Straight | Per-file budgets 35/35/40/30 = 140 total | -> format constraints + all per-file headers + budget audit step + checklist | replaces "maximum 40 lines per file, 150 total"
++ TOOK | from Straight | Staleness signal concept | -> added after compile report in process section | new addition
+- CUT  | "When someone they care about is in pain" as mandatory situation 2 | overlap with wound-activation; recoverable as additional situation | was at emotions.md mandatory situations
+- CUT  | BODY + VOICE as separate lines in situation block | budget pressure for C5 | was at emotions.md block format -- merged into SHOW
+- CUT  | ACTION + HIDDEN as separate lines in situation block | budget pressure for C5 | was at emotions.md block format -- merged into DO
+- CUT  | TRAP as separate line in situation block | budget pressure for C5 | was at emotions.md block format -- compressed into NEVER
+= DEFENDED | Situation-based organization for emotions.md | survived likely DRIFT/BREAK from Straight: emotion-name headers violate anti-recitation | stays because the Intent Anchor demands scene-actionable rules, not psychology-indexed rules
+= DEFENDED | No-quoted-words rule in voice.md | survived BREAK from Straight: "USE {signature words, quoted}" violates anti-recitation checklist | stays because the compile checklist item "zero listed catchphrases" requires it
+= DEFENDED | Compile section length and prescriptiveness | survived likely DRIFT flag | aligned per Intent Anchor: the transformation engine IS the anti-recitation enforcement
+~ ALIGNED | The final version serves the Intent Anchor by compiling encyclopedia data into situation-indexed, mechanics-only writing rules that fit a 140-line budget -- no quoted tics, no emotion labels, no physical inventory, no psychology vocabulary.

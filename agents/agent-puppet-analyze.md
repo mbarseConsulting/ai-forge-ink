@@ -1,0 +1,1 @@
+../skills/puppet-analyze/agents/agent-puppet-analyze.md

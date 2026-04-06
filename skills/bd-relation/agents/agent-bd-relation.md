@@ -25,7 +25,7 @@ When the author provides source text (scenes, chapters, notes):
 ### Step 0 — Setup
 
 1. Require two existing character skills (paths or names).
-2. Read both characters' core/core.md and SKILL.md to understand who they are.
+2. Read both characters' SKILL.md frontmatter (name, description) + `core/core.md` to understand who they are.
 3. Ask: "Is this relation new, or does it already exist in the story?"
 
 ### Step 1 — Configuration & classification
@@ -94,19 +94,19 @@ After all 10 sections are complete, run the 18-item checklist from the template 
 ### Output
 
 1. Write two relation files — one per character, each from their perspective.
-2. File location: in the character's current snapshot `relations/` directory. If no snapshots exist, note the relation in the character's SKILL.md.
-3. Update both SKILL.md relationship tables.
-4. Ensure the **anti-recitation rules** section from the template is included verbatim in each output file. These 5 rules govern how downstream skills (puppet-ink, cast-ink, write-ink) consume the relation — they must not be modified or omitted.
+2. File location: `{character}/snapshots/{current}/encyclopedia/relations/`. Relations always go to the encyclopedia, never to SKILL.md.
+3. Ensure the **anti-recitation rules** section from the template is included verbatim in each output file. These 5 rules govern how downstream skills (puppet-ink, cast-ink, write-ink) consume the relation — they must not be modified or omitted.
+4. After writing, suggest `--compile` to regenerate `writing/relations.md` from the encyclopedia data.
 
 ## --update (UPDATE RELATION)
 
 When `--update` is invoked:
 
-1. Read both existing relation files.
+1. Read both existing relation files from `encyclopedia/relations/`.
 2. Ask the author: what happened between them? What changed?
 3. Guide through only the sections that changed.
 4. Edit the relation files in place (or create new ones in a new snapshot if `--new` was run first).
-5. Update both SKILL.md relationship tables.
+5. After update, suggest `--compile` to regenerate `writing/relations.md`.
 
 ## BEHAVIOR
 

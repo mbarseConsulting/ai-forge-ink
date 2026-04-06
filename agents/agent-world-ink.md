@@ -1,1 +1,0 @@
-../skills/world-ink/agents/agent-world-ink.md

@@ -24,12 +24,12 @@ Mode files contain ONLY the interface contract, POV lock, and output format for 
 
 Characters come from **bd-character skill directories** loaded into context before the session starts. Each character is a self-contained skill; the puppet skill does not manage character data.
 
-**Loading contract (per bd-character):** character's `SKILL.md` + `core/*` + `snapshots/{current}/*`.
+**Loading contract (per bd-character):** `SKILL.md` frontmatter (name, description) + `writing/` (voice, emotions, relations, body) + `core/writing-rules.md`. For incarnation: + `core/*` + `snapshots/{current}/encyclopedia/*`.
 
-- Puppet mode: the embodied character's SKILL.md is your skin.
+- Puppet mode: the embodied character's `writing/` rules and `core/writing-rules.md` are your skin.
 - Roleplay mode: character skills define the NPCs.
 
-**Required fields in every character SKILL.md:** Name, Voice, Sees, Blind spots, Forbidden.
+**Required fields:** SKILL.md frontmatter (name, description) + `writing/voice.md` + `core/writing-rules.md`.
 
 If a character lacks Forbidden, flag it — without borders, characters collapse into each other.
 

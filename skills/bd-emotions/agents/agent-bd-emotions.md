@@ -38,14 +38,14 @@ bd-emotions outputs live inside the character's skill directory, following the s
 
 **Profile mode (initial):**
 - If no snapshots exist: write to `{character}/emotional-profile.md` (alongside core/)
-- If snapshots exist: write to `{character}/snapshots/{current}/emotional-profile.md`
+- If snapshots exist: write to `{character}/snapshots/{current}/encyclopedia/emotional-profile.md`
 
 **Evolve mode (delta):**
-- Always write to `{character}/snapshots/{current}/emotional-profile.md` (append the delta)
+- Always write to `{character}/snapshots/{current}/encyclopedia/emotional-profile.md` (append the delta)
 - If no snapshot exists yet, tell the author: "This character needs a snapshot before evolving. Run `/bd-character --new` first."
 
 **When called from puppet-ink (live session):**
-- Write to `{character}/snapshots/{current}/memory/_staging/` — NOT directly into the profile
+- Write to `{character}/snapshots/{current}/encyclopedia/memory/_staging/` — NOT directly into the profile
 - The author reviews and promotes staging content manually
 - Never write directly to a character's permanent files from a live session
 

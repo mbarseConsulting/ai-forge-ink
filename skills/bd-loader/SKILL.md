@@ -21,7 +21,7 @@ Read `skills/bd-loader/agents/agent-bd-loader.md` — you ARE this persona.
 | `--scan` | **Scan** | Dry run. Show what WOULD be loaded without loading it. Returns the casting call + file manifest. |
 | `--plan` | **Plan** | Compute the loading plan, present it as a table. Execute only on author confirmation. |
 | `--cast` | **Cast** | Load for multiple characters at once. Expects a scene brief with participants. |
-| `--minimal` | **Minimal** | Hard floor. SKILL.md per character only. No core/, no snapshots, no memories, no emotional profiles. Use when token budget is critical or for quick reference checks. |
+| `--minimal` | **Minimal** | Hard floor. SKILL.md frontmatter (name + description) per character only. No core/, no snapshots, no memories, no emotional profiles. Use when token budget is critical or for quick reference checks. |
 
 ## INPUT
 
@@ -42,8 +42,8 @@ bd-loader does not operate on a "light/heavy" scale. It operates on **surface/de
 What it loads per character:
 - **Writing rules (compiled)** — if `snapshots/{current}/writing/` exists, load `voice.md` + `body.md` + relevant `relations.md` entries. These are actionable instructions, not raw data.
 - **Guardrails** — always/never/traps/characteristic signals (from `core/writing-rules.md`)
-- **Current state** — physical and behavioral deltas only (from `snapshots/{current}/state.md` header)
-- **Fallback** — if no writing/ directory exists, load `core/writing-rules.md` + relevant `snapshots/{current}/relations/*.md` (raw encyclopedia)
+- **Current state** — physical and behavioral deltas only (from `snapshots/{current}/encyclopedia/state.md` header)
+- **Fallback** — if no writing/ directory exists, load `core/writing-rules.md` + relevant `snapshots/{current}/encyclopedia/relations/*.md` (raw encyclopedia)
 
 Surface is sufficient when: no wound trigger detected, no memory anchor in the brief, no pivot event.
 
@@ -51,8 +51,8 @@ Surface is sufficient when: no wound trigger detected, no memory anchor in the b
 
 Everything in Surface, PLUS:
 - **Wound architecture** — wound/ghost/lie/want/need/defenses (from `core/core.md` Psychology section)
-- **Emotional profile** — triggers, chains, habitual patterns (from `snapshots/{current}/emotional-profile.md`)
-- **Relevant memories** — only those whose TRIGGER matches elements in the scene brief (from `snapshots/{current}/memory/narrative/` and `memory/somatic/`)
+- **Emotional profile** — triggers, chains, habitual patterns (from `snapshots/{current}/encyclopedia/emotional-profile.md`)
+- **Relevant memories** — only those whose TRIGGER matches elements in the scene brief (from `snapshots/{current}/encyclopedia/memory/narrative/` and `memory/somatic/`)
 - **Deformation table** — altered-state behavior rules (from `core/writing-rules.md` deformation section)
 - **Relation-specific writing rules** — if the relation file for a present character contains writing rules
 
@@ -61,7 +61,7 @@ Depth activates when: the brief contains a wound trigger keyword, a somatic anch
 ### Extraction exceptions
 
 Two files are loaded WHOLE when loaded at all — they are too short and too interconnected for section extraction to be safe:
-- **`SKILL.md`** — the character portrait. Always loaded complete.
+- **`SKILL.md`** — the generic character orchestrator (frontmatter identifies the character). Always loaded complete.
 - **`core/writing-rules.md`** — always/never/traps/signals/deformation. Loaded complete when the character has significant page time.
 
 All other files (core.md, emotional-profile.md, memory entries, relation files) follow the extraction protocol — relevant sections only.
@@ -72,12 +72,12 @@ bd-loader scans every scene brief through 6 axes. Each axis maps to specific bd-
 
 | # | Axis | What it detects | What it loads | Source files |
 |---|------|----------------|---------------|-------------|
-| 1 | **Characters** | Who is in this scene? Named, implied, absent-but-relevant | Voice + guardrails + state per character | `SKILL.md`, `core/writing-rules.md`, `snapshots/{current}/state.md` |
-| 2 | **Emotions** | What emotional register? Calm, charged, volatile | Emotional profile if charged/volatile | `snapshots/{current}/emotional-profile.md` |
+| 1 | **Characters** | Who is in this scene? Named, implied, absent-but-relevant | Voice + guardrails + state per character | `SKILL.md` frontmatter, `core/writing-rules.md`, `snapshots/{current}/encyclopedia/state.md` |
+| 2 | **Emotions** | What emotional register? Calm, charged, volatile | Emotional profile if charged/volatile | `snapshots/{current}/encyclopedia/emotional-profile.md` |
 | 3 | **Period** | When in the story? Which snapshot applies? | Correct snapshot files | `index.md` → `snapshots/{number}/` |
 | 4 | **Scene type** | Everyday / confrontation / intimate / pivot / aftermath | Depth level (surface vs deep) | Determines loading depth, not a specific file |
-| 5 | **Tensions** | Active conflicts, unresolved debts, power dynamics | Relation files for present characters | `snapshots/{current}/relations/{other}.md` |
-| 6 | **Memories** | Sensory triggers, locations, objects, relational echoes | Only memories whose TRIGGER matches the brief | `snapshots/{current}/memory/narrative/`, `memory/somatic/` |
+| 5 | **Tensions** | Active conflicts, unresolved debts, power dynamics | Relation files for present characters | `snapshots/{current}/encyclopedia/relations/{other}.md` |
+| 6 | **Memories** | Sensory triggers, locations, objects, relational echoes | Only memories whose TRIGGER matches the brief | `snapshots/{current}/encyclopedia/memory/narrative/`, `memory/somatic/` |
 
 ### Axis interaction rules
 
@@ -99,9 +99,9 @@ bd-loader scans every scene brief through 6 axes. Each axis maps to specific bd-
 
 ### Deduplication rules
 
-- If a character's `SKILL.md` is already in context → skip it entirely, extract missing depth from deeper files only
+- If a character's `SKILL.md` frontmatter is already in context → skip it entirely, extract missing depth from deeper files only
 - If `core/writing-rules.md` is already loaded → do not reload; check if relation-specific rules are needed
-- If a snapshot `state.md` is in context but from a DIFFERENT snapshot than the scene requires → flag the mismatch, load the correct one
+- If a snapshot `encyclopedia/state.md` is in context but from a DIFFERENT snapshot than the scene requires → flag the mismatch, load the correct one
 - If emotional profile is loaded but the scene triggers a different emotion cluster → load only the relevant new section via Grep
 - **Never reload a file that is already in context.** If in doubt, check. If confirmed present, skip.
 
@@ -136,7 +136,7 @@ Instead of loading 200 lines of `core/core.md`, bd-loader extracts:
 [core/core.md:45-52] Psychology — Wound: abandonment (mother left at 7, no explanation)
 [core/core.md:58-61] Defenses: intellectualization (primary), anticipatory withdrawal, humor as deflection
 [writing-rules.md:12-18] NEVER: raw vulnerability in public, asking for help directly, crying in front of others
-[emotional-profile.md:34-38] Shame chain: trigger → freeze → intellectualize → redirect → delayed collapse (private)
+[encyclopedia/emotional-profile.md:34-38] Shame chain: trigger → freeze → intellectualize → redirect → delayed collapse (private)
 ```
 
 This is the briefing. Tagged, traceable, minimal. Not the files — the lines that matter for THIS scene.
@@ -149,29 +149,31 @@ bd-loader must know the complete structure of every bd-* skill to navigate and e
 
 ```
 {character}/
-  SKILL.md                              # Portrait — always load first, always whole
+  SKILL.md                              # Generic orchestrator (name + description in frontmatter) — always load first, always whole
   index.md                              # Snapshot registry — load to resolve period
   core/
     core.md                             # Permanent identity + psychology + physical
     writing-rules.md                    # Voice + always/never + deformation + signals — load whole
   snapshots/
     {NNN}/
-      state.md                          # Deltas from core at this point
-      emotional-profile.md              # By bd-emotions
-      relations/
-        {other-character}.md            # Relation from this character's POV
+      encyclopedia/
+        state.md                        # Deltas from core at this point
+        emotional-profile.md            # By bd-emotions
+        relations/
+          {other-character}.md          # Relation from this character's POV
+        memory/
+          narrative/{event}.md          # What happened (bd-memory format)
+          somatic/{trace}.md            # What the body kept (bd-memory format)
+          _staging/                     # Unvalidated entries from live sessions — NEVER load
       writing/                          # Compiled writing rules (by --compile) — PREFERRED over raw encyclopedia
         voice.md                        # How to write dialogue
         emotions.md                     # How to write emotional expression
         relations.md                    # How to write interactions per character
         body.md                         # When/how to describe physicality
-      memory/
-        narrative/{event}.md            # What happened (bd-memory format)
-        somatic/{trace}.md              # What the body kept (bd-memory format)
-        _staging/                       # Unvalidated entries from live sessions — NEVER load
-  puppets/
-    notebook.md                         # Live session body traces — load when resuming a session
-    _staging/                           # Satellite outputs from puppet sessions — NEVER load
+  meta/
+    puppets/
+      notebook.md                       # Live session body traces — load when resuming a session
+      _staging/                         # Satellite outputs from puppet sessions — NEVER load
 ```
 
 ### File discovery patterns
@@ -179,10 +181,10 @@ bd-loader must know the complete structure of every bd-* skill to navigate and e
 Use Glob to discover what exists before attempting reads. Not every character has every file.
 
 ```
-Glob: {char}/snapshots/*/                     → discover available snapshots
-Glob: {char}/snapshots/{NNN}/relations/*.md   → discover relation files in a snapshot
-Glob: {char}/snapshots/{NNN}/memory/**/*.md   → discover memory files (narrative + somatic)
-Glob: {char}/puppets/notebook.md              → check if notebook exists
+Glob: {char}/snapshots/*/                                  → discover available snapshots
+Glob: {char}/snapshots/{NNN}/encyclopedia/relations/*.md   → discover relation files in a snapshot
+Glob: {char}/snapshots/{NNN}/encyclopedia/memory/**/*.md   → discover memory files (narrative + somatic)
+Glob: {char}/meta/puppets/notebook.md                      → check if notebook exists
 Grep: {char}/index.md for period labels       → find the right snapshot number
 ```
 
@@ -198,7 +200,7 @@ Grep: {char}/index.md for period labels       → find the right snapshot number
 - Absent memories: load only if the scene contains the trigger — the character has NO access to these
 
 ### bd-relation
-- Output: `relations/{other}.md` in each character's snapshot (or `core/relations/` if no snapshots)
+- Output: `encyclopedia/relations/{other}.md` in each character's snapshot (or `core/relations/` if no snapshots)
 - Key sections: mutual perception, power dynamic, communication style, conflict pattern, absolute limits, relation-specific writing rules
 - Load when: axis 5 detects tension between present characters, or two characters with a relation file are in the scene
 
@@ -248,12 +250,12 @@ The combination of scene type and character role determines loading depth. bd-lo
 
 | Character role \ Scene type | Everyday / slice of life | Dialogue-heavy | Confrontation | Intimate / vulnerability | Pivot / irreversible | Aftermath |
 |-----------------------------|--------------------------|----------------|---------------|--------------------------|----------------------|-----------|
-| **Focal** (POV, protagonist of the moment) | SKILL.md + writing-rules.md | SKILL.md + writing-rules.md + relation-specific rules | SKILL.md + core.md + writing-rules.md + state.md + wound architecture | Full stack | Full stack + world verification | Full stack |
-| **Active** (present, speaking, reacting) | SKILL.md | SKILL.md + writing-rules.md | SKILL.md + writing-rules.md + state.md + relevant relations | SKILL.md + core.md + writing-rules.md + state.md + relevant relations | SKILL.md + core.md + writing-rules.md + state.md + relevant relations | SKILL.md + writing-rules.md + state.md |
-| **Referenced** (mentioned, not present) | Nothing | SKILL.md if their name carries weight | SKILL.md only | SKILL.md only | SKILL.md only | SKILL.md only |
+| **Focal** (POV, protagonist of the moment) | SKILL.md frontmatter + writing/ | SKILL.md frontmatter + writing/ + core/writing-rules.md | SKILL.md frontmatter + core/core.md + core/writing-rules.md + encyclopedia/ + wound architecture | Full stack | Full stack + world verification | Full stack |
+| **Active** (present, speaking, reacting) | SKILL.md frontmatter | SKILL.md frontmatter + writing/ + core/writing-rules.md | SKILL.md frontmatter + writing/ + core/writing-rules.md + encyclopedia/state.md + relevant relations | SKILL.md frontmatter + core/core.md + writing/ + core/writing-rules.md + encyclopedia/ | SKILL.md frontmatter + core/core.md + writing/ + core/writing-rules.md + encyclopedia/ | SKILL.md frontmatter + writing/ + core/writing-rules.md + encyclopedia/state.md |
+| **Referenced** (mentioned, not present) | Nothing | SKILL.md frontmatter if their name carries weight | SKILL.md frontmatter only | SKILL.md frontmatter only | SKILL.md frontmatter only | SKILL.md frontmatter only |
 | **Walk-on** (no bd-character skill) | Nothing | Nothing | Nothing | Nothing | Nothing | Nothing |
 
-"Full stack" = SKILL.md + core/core.md + core/writing-rules.md + snapshots/{current}/state.md + emotional-profile.md + relevant relations + relevant memories.
+"Full stack" = SKILL.md frontmatter + core/core.md + core/writing-rules.md + snapshots/{current}/writing/ + snapshots/{current}/encyclopedia/ (state.md + emotional-profile.md + relevant relations + relevant memories).
 
 ### Axis interaction overrides
 

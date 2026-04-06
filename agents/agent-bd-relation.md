@@ -1,0 +1,1 @@
+../skills/bd-relation/agents/agent-bd-relation.md

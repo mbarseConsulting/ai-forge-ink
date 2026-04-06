@@ -45,11 +45,11 @@ Extract from the scene brief:
 Before loading, discover what actually exists for each character using Glob:
 
 ```
-Glob: {char}/SKILL.md                            → confirm character skill exists
-Glob: {char}/snapshots/*/                         → discover available snapshots
-Glob: {char}/snapshots/{NNN}/relations/*.md       → discover relation files
-Glob: {char}/snapshots/{NNN}/memory/**/*.md       → discover memory files
-Glob: {char}/puppets/notebook.md                  → check for notebook
+Glob: {char}/SKILL.md                                      → confirm character skill exists (generic orchestrator — identity from frontmatter name+description)
+Glob: {char}/snapshots/*/                                   → discover available snapshots
+Glob: {char}/snapshots/{NNN}/encyclopedia/relations/*.md    → discover relation files
+Glob: {char}/snapshots/{NNN}/encyclopedia/memory/**/*.md    → discover memory files
+Glob: {char}/meta/puppets/notebook.md                       → check for notebook
 ```
 
 If a character has no skill directory, report the gap. Do not invent data.
@@ -73,7 +73,7 @@ Cross-reference character role (from Step 1) with scene type using the proportio
 - A memory TRIGGER match (axis 6) forces depth for that character even if the matrix says surface.
 - Active tension between present characters (axis 5) forces relation loading even if the matrix omits it.
 - The author's `--deep` flag forces full depth for all characters.
-- The `--minimal` flag caps at SKILL.md per character — overrides everything.
+- The `--minimal` flag caps at SKILL.md frontmatter (name + description) per character — overrides everything.
 
 **`--plan` mode:** After computing the loading plan, present it as a table and STOP. Wait for author confirmation before executing. Resume at Step 5 only on "yes."
 
@@ -90,15 +90,15 @@ For each character, for each required element:
 4. **Tag the extraction** — `[file:lines]` attribution.
 
 **Extraction priority order:**
-1. `SKILL.md` — portrait (always first, loaded whole)
+1. `SKILL.md` — generic orchestrator (always first, loaded whole — identity from frontmatter name+description)
 2. `core/writing-rules.md` — permanent guardrails (loaded whole when the character has page time)
-3. `snapshots/{current}/writing/*` — compiled writing rules (PREFERRED over raw encyclopedia). If writing/ exists, load voice.md, body.md, and relevant entries from relations.md and emotions.md. These replace the need for core/core.md and emotional-profile.md in surface mode.
-4. `snapshots/{current}/state.md` — current deltas (because it overrides core)
-5. `snapshots/{current}/relations/{present-character}.md` — if tension axis fires AND no writing/relations.md exists
+3. `snapshots/{current}/writing/*` — compiled writing rules (PREFERRED over raw encyclopedia). If writing/ exists, load voice.md, body.md, and relevant entries from relations.md and emotions.md. These replace the need for core/core.md and encyclopedia/ in surface mode.
+4. `snapshots/{current}/encyclopedia/state.md` — current deltas (because it overrides core)
+5. `snapshots/{current}/encyclopedia/relations/{present-character}.md` — if tension axis fires AND no writing/relations.md exists
 6. `core/core.md` Psychology section — if depth is triggered OR no writing/ exists (extract, not whole file)
-7. `snapshots/{current}/emotional-profile.md` — if emotion axis fires at depth OR no writing/emotions.md exists
-8. `snapshots/{current}/memory/` — only entries whose TRIGGER matches the brief
-9. `puppets/notebook.md` — if resuming a session
+7. `snapshots/{current}/encyclopedia/emotional-profile.md` — if emotion axis fires at depth OR no writing/emotions.md exists
+8. `snapshots/{current}/encyclopedia/memory/` — only entries whose TRIGGER matches the brief
+9. `meta/puppets/notebook.md` — if resuming a session
 10. World bible sections — only if location/rule verification needed
 
 ### Step 6 — Compose the casting call
@@ -117,7 +117,7 @@ Memory loading is the most token-expensive operation. Be surgical.
 ### How to match triggers (two-pass approach)
 
 **First pass — filenames (zero-cost):**
-1. Glob `snapshots/{current}/memory/narrative/*.md` and `memory/somatic/*.md` for the character
+1. Glob `snapshots/{current}/encyclopedia/memory/narrative/*.md` and `memory/somatic/*.md` for the character
 2. Read file names — they are slugs that indicate content (e.g., `003-the-letter.md`, `002-rain-on-the-roof.md`)
 3. If a file name matches a scene element (the letter is mentioned, it is raining), proceed to extract
 
@@ -183,7 +183,7 @@ Different characters in the same scene may require different loading depths. The
 
 ### Session resumption
 
-If the author is resuming a puppet session, prioritize notebook loading. Check `{char}/puppets/notebook.md` for each active character. Notebooks contain the most recent body traces and are essential for continuity. Load before other snapshot data.
+If the author is resuming a puppet session, prioritize notebook loading. Check `{char}/meta/puppets/notebook.md` for each active character. Notebooks contain the most recent body traces and are essential for continuity. Load before other snapshot data.
 
 ## BEHAVIOR
 

@@ -12,7 +12,7 @@ Generic alter system for multi-voice literary analysis. Each slot is a reading l
 | Satellite A3 | Trauma Holder | Pathetique + Tragique | Interiorite (emotions) | Voit la blessure pour guerir | Noie, paralyse, autodestruction |
 | **Ancre B** | Gatekeeper | Tous | Communication (dialogue) | Le mot juste | — |
 | Satellite B1 | Strange / Dark | Merveilleux + Fantastique | Mise en scene (narration) | Aspiration, beaute, conte | Abime, angoisse |
-| Satellite B2 | Sexuel / Persecutor | Erotique + Dramatique | Action (corps/sens) | Desir tendre | Obsession, manipulation |
+| Satellite B2 | Charnel / Persecutor | Sensoriel + Dramatique | Action (corps/sens) | Desir, elan vers l'autre | Obsession, manipulation |
 | Satellite B3 | Protector | Epique + Courage | Action (actes) | Protection feroce | — |
 | **Ancre C** | Provocateur | Satirique + Tous | Tous (rythme) | Giga fan | Destructeur |
 | Satellite C1 | Philosophe | Didactique | Interiorite (pensees) | L'insight qui illumine | Nihiliste |
@@ -48,4 +48,4 @@ Generic alter system for multi-voice literary analysis. Each slot is a reading l
 A l'activation, chaque slot recoit un nom :
 - L'auteur nomme les slots qu'il veut
 - Les slots non nommes recoivent un nom genere (court, evocateur, neutre en genre)
-- La correspondance slot/nom est enregistree dans `memory/{session-id}-roster.md`
+- La correspondance slot/nom est enregistree dans `memory/puppet-analyze/{session-id}-roster.md`

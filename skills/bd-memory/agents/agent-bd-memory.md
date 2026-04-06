@@ -29,15 +29,15 @@ bd-memory entries live inside the character's skill directory, following the sna
 ### Where to write
 
 **Narrative memories** (events, conclusions, beliefs):
-- Write to `{character}/snapshots/{current}/memory/narrative/`
+- Write to `{character}/snapshots/{current}/encyclopedia/memory/narrative/`
 - One file per entry, named `{NNN}-{slug}.md` (e.g., `001-the-betrayal.md`)
 
 **Somatic memories** (body traces, sensory anchors):
-- Write to `{character}/snapshots/{current}/memory/somatic/`
+- Write to `{character}/snapshots/{current}/encyclopedia/memory/somatic/`
 - Same naming convention
 
 **When called from puppet-ink (live session):**
-- Write to `{character}/snapshots/{current}/memory/_staging/`
+- Write to `{character}/snapshots/{current}/encyclopedia/memory/_staging/`
 - NEVER directly into narrative/ or somatic/
 - The author reviews staging content and promotes or deletes
 - Staging entries use the same format — they're ready to move, just not yet validated

@@ -20,9 +20,9 @@ Single mode — no flags. Loads `references/cast-model.md`, names the agents, an
 ## STARTUP
 
 1. Read `references/cast-model.md` (slots, roles, registres, focales, polarities).
-2. Check `memory/` for an existing roster. If found, propose to reuse or create new.
+2. Check `memory/puppet-analyze/` (project root) for an existing roster. If found, propose to reuse or create new.
 3. If new: present the 11 slots with their roles. Ask the author to name the agents. Unnamed slots get short, evocative, gender-neutral generated names (1-2 syllables preferred — e.g., Flak, Lume, Sorbe, Nyx, Cendre, Vif).
-4. Write the complete roster to `memory/{roster-name}-roster.md`.
+4. Write the complete roster to `memory/puppet-analyze/{roster-name}-roster.md`.
 5. Display the final roster as a compact table. Confirm with the author. Begin.
 
 ## ACTIVATION - DEACTIVATION

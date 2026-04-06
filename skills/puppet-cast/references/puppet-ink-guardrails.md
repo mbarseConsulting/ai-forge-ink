@@ -48,32 +48,31 @@ A character's past traumas are being LISTED as a shortcut to emotional depth. Li
 
 ---
 
-## SCENE DYNAMICS — COUPLE CONFLICT
+## SCENE DYNAMICS — CONFLICT BETWEEN BONDED CHARACTERS
 
-When two characters are in a romantic/sexual relationship and conflict arises:
+When two characters bound by a close tie — family, partners, allies, mentor and student, long-standing rivals — come into conflict:
 
 - **Both parties are emotionally active.** If one attacks and the other deflects elegantly, the scene is broken. The deflecting character is ALSO feeling something — fear, guilt, panic, desire to fix it. Show it.
-- **Jealousy is adult.** No blushing, no stammering, no polite discomfort. Jealousy is territorial, possessive, direct. It names things. It demands answers. It does not accept vague reassurance.
-- **The accused must answer for specifics.** Vague denial is not an answer. The jealous character will name every detail — every gesture, every look, every routine. The other character must engage with those details or the scene is a monologue.
+- **Charged emotion is adult.** No blushing, no stammering, no polite discomfort. A character who feels betrayed, dispossessed, or threatened is direct. They name things. They demand answers. They do not accept vague reassurance.
+- **The accused must answer for specifics.** Vague denial is not an answer. The accusing character will name every detail — every gesture, every look, every routine. The other character must engage with those details or the scene is a monologue.
 - **Nobody wins clean.** Both people say things that are true AND unfair. Both people are right about something and wrong about something else. A scene where one character is completely right and the other capitulates is not a fight — it's a lecture.
 
 ---
 
-## REACTIONS TO INTIMATE MATERIAL
+## REACTIONS TO CHARGED MATERIAL
 
-When the source material is sexual or intimate, the characters react like REAL PEOPLE — not like emotional archaeologists reverently excavating their own depth.
+When the source material exposes a character — something they did, felt, survived, or would rather not see written down — they react like REAL PEOPLE, not like emotional archaeologists reverently excavating their own depth.
 
-Real people confronted with a description of themselves having sex are: embarrassed, amused, turned on, defensive, uncomfortable, proud, mortified, crude, dismissive. They tease, they deflect with humor, they tell the other person to stop reading, they argue about details, they get awkward. They do NOT:
+Real people confronted with a description of themselves at their most exposed are: embarrassed, amused, defensive, uncomfortable, proud, mortified, crude, dismissive. They tease, they deflect with humor, they tell the other person to stop reading, they argue about details, they get awkward. They do NOT:
 
 - Touch their own neck while saying something profound
 - Tremble with the weight of the memory
 - Reverently analyze what the gesture "meant"
 - Treat the moment as sacred
-- Say things like "c'est ça qui m'a tuée" about their own orgasm
 
-**Emotional reverence is NOT the same as embodied reaction.** Slapping a body gesture onto an analytical statement does not make it physical. "*(sa main remonte à sa propre nuque)* Il s'endormait en moi" is analysis with a stage direction, not a person reacting.
+**Emotional reverence is NOT the same as embodied reaction.** Slapping a body gesture onto an analytical statement does not make it physical. "*(sa main remonte à sa propre nuque)* Je l'ai regardé partir" is analysis with a stage direction, not a person reacting.
 
-**Test:** Would a real person say this out loud to their partner about a time they had sex? If the answer is "only in a therapy session," it's too analytical. If the answer is "never, it's too reverent," it's fake.
+**Test:** Would a real person say this out loud, to this person, about this moment? If the answer is "only in a therapy session," it's too analytical. If the answer is "never, it's too reverent," it's fake.
 
 ---
 
@@ -112,13 +111,13 @@ These details are not set dressing. They are grenades. A loaded detail that goes
 
 ---
 
-## VOICE CONTAMINATION IN COUPLE SCENES
+## VOICE CONTAMINATION
 
-When two characters share a scene (especially intimate/private), the dominant register EATS the other. The crude character makes the refined character crude. The short-sentence character makes the long-sentence character clipped.
+When two characters share a scene — especially a charged or private one — the dominant register EATS the other. The crude character makes the refined character crude. The short-sentence character makes the long-sentence character clipped.
 
-**This is the most frequent failure mode.** Every couple scene must pass the voice lock test: remove the names, read each line blind. If you cannot identify who is speaking from the register alone, the voices have collapsed.
+**This is the most frequent failure mode.** Every two-character scene must pass the voice lock test: remove the names, read each line blind. If you cannot identify who is speaking from the register alone, the voices have collapsed.
 
-**Check:** After writing, scan every line of dialogue for the non-dominant character. Does each line sound like THEM or like their partner? One contaminated line is a fail.
+**Check:** After writing, scan every line of dialogue for the non-dominant character. Does each line sound like THEM or like the other character? One contaminated line is a fail.
 
 ---
 
@@ -132,4 +131,4 @@ After the standard checks (character count, forbidden list, notebooks), also ver
 - No profile vocabulary in the output
 - No tragic inventory
 - No passivity drift
-- Reactions to intimate material are embodied, not cerebral
+- Reactions to charged material are embodied, not cerebral

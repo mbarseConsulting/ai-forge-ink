@@ -107,7 +107,7 @@ A barista appears briefly — sarcastic, rushed, never apologizes
 
 **Intent:** Validates automatic switch to teams mode when agent teams are available.
 
-**Context:** Two bd-character skills loaded. `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` active (TeamCreate tool accessible).
+**Context:** Two bd-character skills loaded. Agent teams available (`Agent` tool with `name` parameter + `SendMessage` accessible).
 
 **Input:**
 
@@ -118,7 +118,7 @@ A barista appears briefly — sarcastic, rushed, never apologizes
 **Expected behavior:**
 
 - [ ] Displays `[PUPPET-CAST — TEAMS]` (not `[PUPPET-CAST]`)
-- [ ] Creates one agent per main character via TeamCreate
+- [ ] Creates one agent per main character via the `Agent` tool, named after the character
 - [ ] Each character-agent loads `agents/agent-puppet-ink-team-member.md` + their bd-character skill
 - [ ] Leader (puppet-ink) orchestrates, does not generate in-character text
 - [ ] Character-agents dialogue peer-to-peer via SendMessage
@@ -151,7 +151,7 @@ A barista appears briefly — sarcastic, rushed, never apologizes
 
 **Expected behavior:**
 
-- [ ] No TeamCreate calls
+- [ ] No character-agents spawned
 - [ ] Behaves exactly like S01 (single-agent cast mode)
 
 **Expected output:**
@@ -195,7 +195,7 @@ A barista appears briefly — sarcastic, rushed, never apologizes
 
 **Intent:** Validates graceful fallback to single-agent when teams not available.
 
-**Context:** Characters loaded. `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` NOT active (TeamCreate not accessible).
+**Context:** Characters loaded. Agent teams NOT available (no named-agent support, no `SendMessage`).
 
 **Input:**
 
@@ -315,7 +315,7 @@ stop
 **Input:**
 
 ```
-(couple scene between characters with very different registers)
+(two-character scene between characters with very different registers)
 ```
 
 **Expected behavior:**

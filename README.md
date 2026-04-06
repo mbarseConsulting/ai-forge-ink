@@ -4,7 +4,7 @@ _AI artifacts for visual fiction — worldbuilding, characters, dialogue, and im
 
 ## Description
 
-A visual fiction toolkit: build worlds, forge characters with emotional depth and memory, stage dialogue and scenes, analyze comic pages, and generate image prompts. 11 specialized skills organized in 3 families, designed for Claude Code.
+A visual fiction toolkit: build worlds, forge characters with emotional depth and memory, stage dialogue and scenes, analyze comic pages, and generate image prompts. 12 specialized skills organized in 3 families, designed for Claude Code.
 
 ## Skills
 
@@ -18,6 +18,7 @@ A visual fiction toolkit: build worlds, forge characters with emotional depth an
 | `bd-memory`    | Memory recorder — tracks how characters remember and distort past events  |
 | `bd-relation`  | Relation builder — deep bidirectional relation sheets between characters  |
 | `bd-supp-cast` | Supporting cast — lightweight fiches for secondary characters             |
+| `bd-loader`    | Context loader — surgically loads the right bd-* data for a scene          |
 
 ### Puppet — Character Embodiment & Fiction
 
@@ -34,7 +35,7 @@ A visual fiction toolkit: build worlds, forge characters with emotional depth an
 | `it-scans`   | Scan analyzer — extracts script, dialogue, scenes from comic/manga/BD pages                  |
 | `it-prompts` | Prompt generator — translates narrative content into image prompts (NovelAI, Midjourney, SD) |
 
-**11 skills** — 6 worldbuilding/characters, 3 puppet/fiction, 2 image tools
+**12 skills** — 7 worldbuilding/characters, 3 puppet/fiction, 2 image tools
 
 ## Structure
 
@@ -53,5 +54,5 @@ Rebuild after any skill modification:
 
 ```bash
 .claude/scripts/build-claudeai.sh            # all zips
-.claude/scripts/build-claudeai.sh world-ink  # single zip
+.claude/scripts/build-claudeai.sh bd-world    # single zip
 ```
