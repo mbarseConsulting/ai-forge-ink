@@ -1,0 +1,1 @@
+../skills/bd-character/agents/agent-bd-character.md

@@ -1,0 +1,1 @@
+../skills/bd-loader/agents/agent-bd-loader.md

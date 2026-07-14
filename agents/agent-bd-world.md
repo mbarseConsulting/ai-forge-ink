@@ -1,0 +1,1 @@
+../skills/bd-world/agents/agent-bd-world.md
